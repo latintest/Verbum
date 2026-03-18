@@ -603,6 +603,29 @@ function getAccessibleWords(user,setId,db){
   return set.words;
 }
 
+function allAccessibleWordsDue(user,setId,db){
+  // For chunked sets: require ALL words in started chunks to be due before
+  // allowing a session. This prevents partial sessions with wrong denominators.
+  // Returns {allDue, nextDue} where nextDue is the latest nextReview date.
+  if(!isChunkingActive(user,setId,db))return{allDue:true,nextDue:null};
+  const set=db.sets.find(function(s){return s.id===setId;});if(!set)return{allDue:true,nextDue:null};
+  const today=new Date();
+  const ci=getCurrentChunk(user,setId,db)||0;
+  // Only check words in started chunks (0 through ci inclusive)
+  const wordsToCheck=getChunkWords(set,ci);
+  var allDue=true,latestDue=null;
+  wordsToCheck.forEach(function(w,i){
+    const p=db.progress[user+'_'+setId+'_'+i];
+    if(!p||!p.nextReview)return; // never reviewed — counts as due
+    const d=new Date(p.nextReview);
+    if(d>today){
+      allDue=false;
+      if(!latestDue||d>latestDue)latestDue=d;
+    }
+  });
+  return{allDue:allDue,nextDue:latestDue};
+}
+
 /* ── STREAK MESSAGE ── */
 function getStreakMsg(streak){
   var milestones={0:'Incipiamus!',7:'Septem dies! Magister probat 🎉',31:'Unus mensis! Magister te laudat 🎉',100:'Mirabile visu! Centum dies! 🎉'};
@@ -675,22 +698,40 @@ function renderProgressTab(){
     const sessions=db.sessions.filter(s=>s.user===currentUser&&s.setId===set.id);
     const totalSec=sessions.reduce((a,s)=>a+(s.duration||0),0),mn=Math.floor(totalSec/60),sc=totalSec%60;
     const fillColor=m.stage===5?'var(--purple)':m.stage>=3?'var(--gold)':'var(--teal)';
-    const accessibleProg=getAccessibleWords(currentUser,set.id,db);
-    let setDue=0;
-    accessibleProg.forEach((w,wi)=>{
-      const p=db.progress[currentUser+'_'+set.id+'_'+wi];
-      if(!p||!p.nextReview||new Date(p.nextReview)<=today)setDue++;
-    });
-    let nextDueForSet=null;
-    if(setDue===0){
+    let studyReady=false,nextDueForSet=null;
+    if(isChunkingActive(currentUser,set.id,db)&&!isChunkGated(currentUser,set.id,db)){
+      // Chunked: only ready when ALL started-chunk words are due
+      const chk=allAccessibleWordsDue(currentUser,set.id,db);
+      studyReady=chk.allDue;
+      if(!studyReady)nextDueForSet=chk.nextDue;
+    }else if(!isChunkingActive(currentUser,set.id,db)){
+      // Non-chunked: ready if any word is due
+      const accessibleProg=getAccessibleWords(currentUser,set.id,db);
+      let setDue=0;
       accessibleProg.forEach((w,wi)=>{
         const p=db.progress[currentUser+'_'+set.id+'_'+wi];
-        if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDueForSet||d<nextDueForSet)nextDueForSet=d;}
+        if(!p||!p.nextReview||new Date(p.nextReview)<=today)setDue++;
       });
+      studyReady=setDue>0;
+      if(!studyReady){
+        accessibleProg.forEach((w,wi)=>{
+          const p=db.progress[currentUser+'_'+set.id+'_'+wi];
+          if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDueForSet||d<nextDueForSet)nextDueForSet=d;}
+        });
+      }
+    }
+    // isChunkGated = interval gate active, show next due from previous chunk
+    if(isChunkGated(currentUser,set.id,db)){
+      const ci=getCurrentChunk(currentUser,set.id,db)||0;
+      const prevEnd=ci*CHUNK_SIZE;
+      for(var wg=0;wg<prevEnd;wg++){
+        const p=db.progress[currentUser+'_'+set.id+'_'+wg];
+        if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDueForSet||d<nextDueForSet)nextDueForSet=d;}
+      }
     }
     const nothingLabel=nextDueForSet?'Next review '+formatNextDue(nextDueForSet):'Nothing due yet';
-    const studyBtn=setDue>0
-      ?'<button class="btn btn-primary btn-sm" onclick="startStudyOrRefresh(&quot;'+set.id+'&quot;)">Study ('+setDue+' due)</button>'
+    const studyBtn=studyReady
+      ?'<button class="btn btn-primary btn-sm" onclick="startStudyOrRefresh(&quot;'+set.id+'&quot;)">Study now</button>'
       :'<button class="btn btn-sm" style="opacity:0.5;cursor:default;font-size:12px" disabled>'+nothingLabel+'</button>';
     const canEdit=set.createdBy===currentUser;
     const collapseId='progress-detail-'+si;
@@ -709,11 +750,11 @@ function renderProgressTab(){
       stepsHtml+='<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic">Complete all chunks to unlock full-set levels 3-5.</div>';
     }else{
       var lvlSteps=[
-        {done:m.unlockedStage>=1,label:'Level 1: Flip card (L&gt;E)'},
-        {done:m.unlockedStage>=2,label:'Level 2: MC L&gt;E (100%)'},
-        {done:m.unlockedStage>=3,label:'Level 3: MC E&gt;L (100%)'},
-        {done:m.unlockedStage>=4,label:'Level 4: Type L&gt;E (100%)'},
-        {done:m.unlockedStage>=5||(m.unlockedStage===4&&m.passes>=5),label:'Level 5: Type E&gt;L x 5 perfect sessions'}
+        {done:m.unlockedStage>=1,label:'Stage 1: Flip card (L&gt;E)'},
+        {done:m.unlockedStage>=2,label:'Stage 2: MC L&gt;E (100%)'},
+        {done:m.unlockedStage>=3,label:'Stage 3: MC E&gt;L (100%)'},
+        {done:m.unlockedStage>=4,label:'Stage 4: Type L&gt;E (100%)'},
+        {done:m.unlockedStage>=5||(m.unlockedStage===4&&m.passes>=5),label:'Stage 5: Type E&gt;L x 5 perfect sessions'}
       ];
       lvlSteps.forEach(function(s){stepsHtml+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><span style="font-size:14px">'+(s.done?'\u2713':'\u25cb')+'</span><span style="font-size:13px;color:'+(s.done?'var(--teal)':'var(--text3)')+'">'+s.label+'</span></div>';});
     }
@@ -907,27 +948,37 @@ function buildQueue(set,setId,db,dueOnly){
 
 /* ── STUDY ENGINE ── */
 function startStudyOrRefresh(setId){
-  // Recalculate due count at click time before deciding whether to launch
   const db=getDB(),set=db.sets.find(s=>s.id===setId);
   if(!set){startStudy(setId);return;}
-  const today=new Date();
-  const accessible=getAccessibleWords(currentUser,setId,db);
-  let due=0;
-  accessible.forEach(function(w,wi){
-    const p=db.progress[currentUser+'_'+setId+'_'+wi];
-    if(!p||!p.nextReview||new Date(p.nextReview)<=today)due++;
-  });
-  if(due===0){
-    // Nothing actually due — re-render to update stale button, show next time
-    renderStudent();
-    let nextDueDate=null;
+  // For chunked sets: all words in started chunks must be due before launching
+  if(isChunkingActive(currentUser,setId,db)&&!isChunkGated(currentUser,setId,db)){
+    const check=allAccessibleWordsDue(currentUser,setId,db);
+    if(!check.allDue){
+      renderStudent();
+      if(check.nextDue)toast('Not all words are due yet. Next review '+formatNextDue(check.nextDue)+'.');
+      else toast('Come back when all words are due.');
+      return;
+    }
+  }else{
+    // Non-chunked: any due word is enough to launch
+    const today=new Date();
+    const accessible=getAccessibleWords(currentUser,setId,db);
+    let due=0;
     accessible.forEach(function(w,wi){
       const p=db.progress[currentUser+'_'+setId+'_'+wi];
-      if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDueDate||d<nextDueDate)nextDueDate=d;}
+      if(!p||!p.nextReview||new Date(p.nextReview)<=today)due++;
     });
-    if(nextDueDate)toast('No words due yet. Next review '+formatNextDue(nextDueDate)+'.');
-    else toast('No words due yet. Complete a session first!');
-    return;
+    if(due===0){
+      renderStudent();
+      let nextDueDate=null;
+      accessible.forEach(function(w,wi){
+        const p=db.progress[currentUser+'_'+setId+'_'+wi];
+        if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDueDate||d<nextDueDate)nextDueDate=d;}
+      });
+      if(nextDueDate)toast('No words due yet. Next review '+formatNextDue(nextDueDate)+'.');
+      else toast('No words due yet. Complete a session first!');
+      return;
+    }
   }
   startStudy(setId);
 }
@@ -991,7 +1042,7 @@ function startStudy(setId){
   const _startStage=getSetStage(currentUser,setId,db);
   const _startChunk=isChunkingActive(currentUser,setId,db)?getCurrentChunk(currentUser,setId,db):null;
   const _startChunkStage=_startChunk!==null?getChunkStage(currentUser,setId,_startChunk,db):null;
-  studySession={setId,set,queue,notDueWords:notDue,hasDueOnly,idx:0,correct:0,firstCorrect:0,total:queue.length,startTime:Date.now(),flipped:false,mode:autoMode,flipRated:0,flipTotal:queue.length,_startStage,_startChunk,_startChunkStage,freePractice:false,interacted:false};
+  studySession={setId,set,queue,notDueWords:notDue,hasDueOnly,idx:0,correct:0,firstCorrect:0,total:queue.length,startTime:Date.now(),flipped:false,mode:autoMode,flipRated:0,flipTotal:queue.length,_startStage,_startChunk,_startChunkStage,freePractice:false,interacted:false,_queueTotal:queue.length};
   document.getElementById('study-set-title-bar').textContent=set.title;
   updateDirToggleText();
   document.getElementById('free-practice-banner').style.display='none';
@@ -1023,7 +1074,7 @@ function startFreePractice(setId){
     practiceStage=maxChunkSt>=2?1:0;
   }else{
     const curStage=getSetStage(currentUser,setId,db);
-    practiceStage=Math.max(0,curStage-1);
+    practiceStage=curStage;
   }
 
   const practiceMode=STAGE_MODE[practiceStage];
@@ -1126,11 +1177,20 @@ function setStudyMode(mode,el,stageIdx){
   if(studySession){
     const db=getDB();
     if(stageIdx!==undefined){studyDirection=STAGE_DIR[stageIdx];updateDirToggleText();}
-    const{due,notDue}=buildQueue(studySession.set,studySession.setId,db,true);
-    const q=due.length>0?due:studySession.set.words.map((w,wi)=>({wordIndex:wi,word:w,progress:db.progress[currentUser+'_'+studySession.setId+'_'+wi]||{reps:0,ef:1.3,interval:0,nextReview:null},key:currentUser+'_'+studySession.setId+'_'+wi}));
+    var q;
+    if(studySession.freePractice){
+      // Extra practice: always use all accessible words, ignore due dates
+      const _access=getAccessibleWords(currentUser,studySession.setId,db);
+      q=_access.map((w,wi)=>({wordIndex:wi,word:w,progress:db.progress[currentUser+'_'+studySession.setId+'_'+wi]||{reps:0,ef:1.3,interval:0,nextReview:null},key:currentUser+'_'+studySession.setId+'_'+wi}));
+      studySession.notDueWords=[];studySession.hasDueOnly=false;
+    }else{
+      // Scheduled session: use due words only
+      const{due,notDue}=buildQueue(studySession.set,studySession.setId,db,true);
+      q=due.length>0?due:studySession.set.words.map((w,wi)=>({wordIndex:wi,word:w,progress:db.progress[currentUser+'_'+studySession.setId+'_'+wi]||{reps:0,ef:1.3,interval:0,nextReview:null},key:currentUser+'_'+studySession.setId+'_'+wi}));
+      studySession.notDueWords=due.length>0?notDue:[];studySession.hasDueOnly=due.length>0&&notDue.length>0;
+    }
     shuffle(q);
-    studySession.queue=q;studySession.notDueWords=due.length>0?notDue:[];studySession.hasDueOnly=due.length>0&&notDue.length>0;
-    studySession.idx=0;studySession.correct=0;studySession.firstCorrect=0;studySession.total=q.length;studySession.startTime=Date.now();studySession.interacted=false;
+    studySession.queue=q;studySession.idx=0;studySession.correct=0;studySession.firstCorrect=0;studySession.total=q.length;studySession.startTime=Date.now();studySession.interacted=false;
     if(mode==='flip'){studySession.flipRated=0;studySession.flipTotal=q.length;}
     loadCard();
   }
@@ -1202,6 +1262,7 @@ function loadCard(){
     document.getElementById('type-front-lang').textContent=frontLang;
     document.getElementById('type-question').textContent=front;
     document.getElementById('type-answer').value='';
+    document.getElementById('type-answer').style.display='';
     document.getElementById('type-feedback').style.display='none';
     document.getElementById('type-feedback').className='type-feedback';
     document.getElementById('type-check-btn').style.display='';
@@ -1274,7 +1335,7 @@ function checkTypeAnswer(){
     const confirmAlts=card.confirmAnswer.toLowerCase().split('/').map(s=>s.trim());
     if(confirmAlts.some(a=>a===answer)){
       fb.className='type-feedback correct';fb.style.display='block';fb.textContent='Good \u2014 moving on.';
-      document.getElementById('type-answer').value='';document.getElementById('type-answer').placeholder='Type the translation\u2026';
+      document.getElementById('type-answer').style.display='none';
       document.getElementById('type-check-btn').style.display='none';document.getElementById('type-check-btn').textContent='Check answer';
       document.getElementById('type-next-btn').style.display='';document.getElementById('type-next-btn').textContent='Next card \u2192';
     }else{
@@ -1361,11 +1422,10 @@ function showResults(){
   const elapsed=Math.round((Date.now()-studySession.startTime)/1000);
   const mins=Math.floor(elapsed/60),secs=elapsed%60;
   const correct=studySession.correct,firstCorrect=studySession.firstCorrect||0;
-  // Use the number of words in the original queue, not the full set size.
-  // During chunking the queue only contains words up to the current chunk.
-  const origTotal=studySession._startChunk!==null&&studySession._startChunk!==undefined
-    ?getChunkWords(studySession.set,studySession._startChunk).length
-    :studySession.set.words.length;
+  // origTotal = actual number of unique words presented in this session.
+  // Use _queueTotal (set at launch) so chunk sessions score against cards seen,
+  // not the full accumulated chunk size.
+  const origTotal=studySession._queueTotal||studySession.set.words.length;
   const pct=studyMode==='flip'
     ?(origTotal>0?Math.round(((studySession.flipRated||0)/origTotal)*100):0)
     :(origTotal>0?Math.round((firstCorrect/origTotal)*100):0);
