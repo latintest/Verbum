@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Verbum — Latin Vocabulary</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F4EE;--bg2:#EFEBE2;--bg3:#E8E2D6;--surface:#FDFBF8;
+  --border:rgba(120,100,70,0.18);--border2:rgba(120,100,70,0.3);
+  --text:#2A2118;--text2:#6B5D4A;--text3:#9C8C78;
+  --gold:#8B6914;--gold-light:#F5E6C0;--gold-bg:#FDF6E3;
+  --teal:#0F6E56;--teal-light:#E1F5EE;
+  --red:#A32D2D;--red-light:#FCEBEB;
+  --blue:#185FA5;--blue-light:#E6F1FB;
+  --amber:#854F0B;--amber-light:#FAEEDA;
+  --purple:#534AB7;--purple-light:#EEEDFE;
+  --radius:10px;--radius-lg:14px;
+  --shadow:0 2px 12px rgba(60,40,10,0.08);--shadow-lg:0 8px 32px rgba(60,40,10,0.13)
+}
+html,body{height:100%;font-family:'Source Serif 4',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.screen{display:none;flex-direction:column;min-height:100vh;animation:fadeIn 0.25s ease}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.top-bar-brand{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold)}
+.top-bar-sub{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-top:1px}
+.top-bar-right{display:flex;align-items:center;gap:12px}
+.top-bar-user{font-size:13px;color:var(--text2)}
+.nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;flex-shrink:0}
+.nav-tab{padding:14px 18px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.nav-tab:hover:not(.active){color:var(--text);background:var(--bg2)}
+.content{flex:1;overflow-y:auto;padding:24px;max-width:760px;margin:0 auto;width:100%}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text);font-size:14px;cursor:pointer;transition:all 0.15s;font-family:'Source Serif 4',serif;width:100%;margin-top:10px}
+.btn:hover{background:var(--bg2)}.btn:active{transform:scale(0.98)}
+.btn-primary{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:600}.btn-primary:hover{background:#7a5c12}
+.btn-success{background:var(--teal);color:#fff;border-color:var(--teal)}.btn-success:hover{opacity:0.88}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red)}.btn-danger:hover{opacity:0.88}
+.btn-ghost{background:transparent;border-color:var(--border2);color:var(--text2)}.btn-ghost:hover{background:var(--bg2)}
+.btn-sm{padding:7px 16px;font-size:13px;width:auto;margin-top:0}
+.btn-row{display:flex;gap:8px;margin-top:10px}
+.logout-btn{font-size:12px;color:var(--text2);cursor:pointer;padding:5px 12px;border:1px solid var(--border);border-radius:20px;background:transparent;font-family:'Source Serif 4',serif;transition:all 0.15s}.logout-btn:hover{background:var(--bg2)}
+label{font-size:13px;color:var(--text2);display:block;margin-top:14px}label:first-child{margin-top:0}
+input[type=text],input[type=password],select{width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius);font-size:14px;font-family:'Source Serif 4',serif;background:var(--surface);color:var(--text);margin-top:5px;transition:border-color 0.15s}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow)}.card+.card{margin-top:14px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.stat-card{background:var(--bg2);border-radius:var(--radius);padding:14px;text-align:center;border:1px solid var(--border)}
+.stat-val{font-family:'Playfair Display',serif;font-size:26px;color:var(--text)}
+.stat-lbl{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:0.8px}
+.badge{display:inline-flex;align-items:center;padding:3px 11px;border-radius:999px;font-size:11px;font-weight:600}
+.badge-new{background:var(--bg3);color:var(--text3)}
+.badge-beginner{background:var(--blue-light);color:var(--blue)}
+.badge-familiar{background:var(--teal-light);color:var(--teal)}
+.badge-advanced{background:var(--amber-light);color:var(--amber)}
+.badge-expert{background:var(--purple-light);color:var(--purple)}
+.badge-gold{background:var(--gold-light);color:var(--gold)}
+.set-item{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:10px;transition:all 0.15s;box-shadow:var(--shadow)}
+.set-item:hover{border-color:var(--border2);box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.set-name{font-weight:600;font-size:15px}.set-meta{font-size:12px;color:var(--text3);margin-top:3px}
+.set-actions{display:flex;gap:8px;flex-shrink:0;align-items:center}
+.xp-bar-wrap{background:var(--bg3);border-radius:999px;height:8px;overflow:hidden;margin-top:6px}
+.xp-bar{height:100%;border-radius:999px;background:linear-gradient(90deg,#C49A2A,#8B6914);transition:width 0.6s ease}
+.flashcard-scene{perspective:1100px;margin:8px 0 16px}
+.flashcard{width:100%;height:220px;position:relative;transform-style:preserve-3d;transition:transform 0.5s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.flashcard.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;box-shadow:var(--shadow-lg)}
+.card-back{transform:rotateY(180deg);background:var(--gold-bg);border-color:rgba(139,105,20,0.25)}
+.card-word{font-family:'Playfair Display',serif;font-size:32px;color:var(--text);text-align:center}
+.card-lang{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.card-hint{font-size:12px;color:var(--text3);margin-top:10px;font-style:italic}
+.card-notes{font-size:13px;color:var(--text2);margin-top:8px;font-style:italic}
+.progress-bar{height:5px;background:var(--bg3);border-radius:999px;overflow:hidden;margin-bottom:14px}
+.progress-fill{height:100%;background:var(--teal);border-radius:999px;transition:width 0.35s}
+.mc-option{padding:13px 18px;border:1px solid var(--border2);border-radius:var(--radius);cursor:pointer;font-size:14px;margin-bottom:9px;transition:all 0.15s;color:var(--text);background:var(--surface);font-family:'Source Serif 4',serif}
+.mc-option:hover{background:var(--bg2)}.mc-option.correct{background:var(--teal-light);border-color:var(--teal);color:var(--teal);font-weight:600}.mc-option.wrong{background:var(--red-light);border-color:var(--red);color:var(--red)}
+.mode-selector{display:flex;gap:8px;margin-bottom:16px}
+.mode-btn{flex:1;padding:10px 8px;border:1px solid var(--border2);border-radius:var(--radius);background:transparent;font-size:13px;cursor:pointer;text-align:center;color:var(--text2);transition:all 0.15s;font-family:'Source Serif 4',serif}
+.mode-btn.active{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:600}
+.mode-btn:hover:not(.active){background:var(--bg2)}
+.dir-toggle{font-size:12px;color:var(--text2);cursor:pointer;padding:5px 12px;border:1px solid var(--border);border-radius:20px;background:var(--surface);font-family:'Source Serif 4',serif;transition:all 0.15s}.dir-toggle:hover{background:var(--bg2)}
+.result-feedback{text-align:center;padding:2rem 1rem}
+.result-big{font-size:56px}.result-msg{font-family:'Playfair Display',serif;font-size:26px;color:var(--text);margin-top:10px}
+.result-sub{font-size:15px;color:var(--text2);margin-top:6px}
+.teacher-table-wrap{overflow-x:auto}
+.teacher-table{width:100%;border-collapse:collapse;font-size:13px;min-width:500px}
+.teacher-table th{text-align:left;padding:10px 14px;color:var(--text2);border-bottom:1px solid var(--border2);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;background:var(--bg2)}
+.teacher-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+.teacher-table tr:last-child td{border-bottom:none}.teacher-table tr:hover td{background:var(--bg2)}
+.word-row{display:flex;gap:8px;align-items:center;margin-bottom:7px}
+.word-row input{margin-top:0;flex:1}
+.remove-word{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px 8px;flex-shrink:0;line-height:1;border-radius:4px}.remove-word:hover{color:var(--red);background:var(--red-light)}
+.login-wrap{display:flex;align-items:center;justify-content:center;flex:1;padding:2rem}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;box-shadow:var(--shadow-lg);width:100%;max-width:420px}
+.login-logo{font-family:'Playfair Display',serif;font-size:38px;color:var(--gold);text-align:center}
+.login-tagline{text-align:center;font-size:12px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:4px;margin-bottom:2rem}
+.auth-tabs{display:flex;border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem}
+.auth-tab{flex:1;text-align:center;padding:9px;font-size:13px;cursor:pointer;transition:all 0.15s;color:var(--text2);font-family:'Source Serif 4',serif}
+.auth-tab.active{background:var(--gold);color:#fff;font-weight:600}
+.demo-hint{font-size:12px;color:var(--text3);text-align:center;margin-top:12px;line-height:1.5}
+.demo-hint code{background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:11px;color:var(--text2)}
+.section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin:1.5rem 0 0.8rem}.section-title:first-child{margin-top:0}
+.hero-card{background:linear-gradient(135deg,var(--gold-bg) 0%,var(--surface) 100%);border:1px solid rgba(139,105,20,0.2);border-radius:var(--radius-lg);padding:22px;margin-bottom:16px;box-shadow:var(--shadow)}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px;font-style:italic}
+.streak-row{display:flex;align-items:center;gap:6px}
+.streak-val{font-family:'Playfair Display',serif;font-size:18px;color:var(--text)}
+.word-list-header{display:flex;gap:8px;margin-bottom:4px;padding:0 28px 0 0}
+.word-list-header span{flex:1;font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px}
+.type-feedback{padding:11px 14px;border-radius:var(--radius);font-size:14px;margin-top:8px;display:none}
+.type-feedback.correct{background:var(--teal-light);color:var(--teal);border:1px solid var(--teal)}
+.type-feedback.wrong{background:var(--red-light);color:var(--red);border:1px solid var(--red)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);padding:10px 22px;border-radius:999px;font-size:13px;z-index:9999;pointer-events:none;opacity:0;transition:all 0.3s;white-space:nowrap;font-family:'Source Serif 4',serif}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}
+.shake{animation:shake 0.45s ease}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:999px}
+@media(max-width:500px){.content{padding:16px}.top-bar{padding:12px 16px}.card-word{font-size:24px}.stat-val{font-size:20px}.mode-btn{font-size:12px;padding:8px 4px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- LOGIN -->
+<div class="screen active" id="screen-login">
+<div class="login-wrap"><div class="login-box">
+<div class="login-logo">Verbum</div>
+<div class="login-tagline">Latin Vocabulary &middot; Spaced Repetition</div>
+<div class="auth-tabs">
+  <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Sign in</div>
+  <div class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Register</div>
+</div>
+<div id="login-form">
+  <label>Username</label><input type="text" id="login-user" placeholder="Username"/>
+  <label>Password</label><input type="password" id="login-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"/>
+  <button class="btn btn-primary" onclick="doLogin()">Sign in</button>
+  <p class="demo-hint">Demo: <code>teacher / latin123</code> &nbsp;|&nbsp; <code>student1 / latin123</code></p>
+</div>
+<div id="register-form" style="display:none">
+  <label>Username</label><input type="text" id="reg-user" placeholder="Choose a username"/>
+  <label>Password</label><input type="password" id="reg-pass" placeholder="Choose a password"/>
+  <label>Role</label><select id="reg-role"><option value="student">Student</option><option value="teacher">Teacher</option></select>
+  <button class="btn btn-primary" onclick="doRegister()">Create account</button>
+</div>
+</div></div>
+</div>
+
+<!-- STUDENT -->
+<div class="screen" id="screen-student">
+<div class="top-bar">
+  <div><div class="top-bar-brand">Verbum</div><div class="top-bar-sub">Latin Vocabulary</div></div>
+  <div class="top-bar-right"><span class="top-bar-user" id="student-name-bar"></span><button class="logout-btn" onclick="doLogout()">Sign out</button></div>
+</div>
+<div class="nav" id="student-nav">
+  <div class="nav-tab active" onclick="studentTab('home',this)">Home</div>
+  <div class="nav-tab" onclick="studentTab('progress',this)">Sets &amp; Progress</div>
+  <div class="nav-tab" onclick="studentTab('create',this)">Create Set</div>
+</div>
+<div class="content">
+  <div id="stab-home">
+    <div class="hero-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+        <div><div style="font-size:13px;color:var(--text2)">Welcome back,</div><div style="font-family:'Playfair Display',serif;font-size:24px" id="s-welcome-name">Student</div></div>
+        <div style="text-align:right"><div class="streak-row" style="justify-content:flex-end"><span style="font-size:20px">&#x1F525;</span><span class="streak-val" id="s-streak">0</span><span style="font-size:13px;color:var(--text2)">day streak</span></div><div style="font-size:11px;color:var(--text3);margin-top:2px" id="s-streak-msg">Keep it going!</div></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-val" id="s-total-words">0</div><div class="stat-lbl">Words due today</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-mastered">0</div><div class="stat-lbl">Sets mastered</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-due">0</div><div class="stat-lbl">Sets in progress</div></div>
+      </div>
+      <div style="margin-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:5px"><span id="s-level-badge"></span><span style="color:var(--text2);font-size:12px" id="s-xp-label">0% avg mastery</span></div>
+        <div class="xp-bar-wrap"><div class="xp-bar" id="s-xp-bar" style="width:0%"></div></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;text-align:right" id="s-xp-next"></div>
+      </div>
+    </div>
+    <div class="section-title">Ready to review</div>
+    <div id="home-due-sets"></div>
+  </div>
+  <div id="stab-progress" style="display:none"><div class="section-title">Sets &amp; Progress</div><div id="progress-detail"></div></div>
+  <div id="stab-create" style="display:none">
+    <div class="card">
+      <div style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px" id="s-create-set-heading">Create a new set</div>
+      <label>Set title</label><input type="text" id="s-new-set-title" placeholder="e.g. Chapter 5 Vocabulary"/>
+      <label style="margin-top:16px">Words</label>
+      <div class="word-list-header"><span>Latin</span><span>English</span><span style="flex:0.5">Notes (optional)</span></div>
+      <div id="s-word-list-wrap"></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addStudentWordRow()">+ Add word</button>
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn btn-primary" onclick="saveStudentSet()">Save set</button>
+        <button class="btn btn-ghost btn-sm" id="s-cancel-edit-btn" style="display:none" onclick="cancelStudentEdit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TEACHER -->
+<div class="screen" id="screen-teacher">
+<div class="top-bar">
+  <div><div class="top-bar-brand">Verbum</div><div class="top-bar-sub">Teacher Dashboard</div></div>
+  <div class="top-bar-right"><span class="top-bar-user" id="teacher-name-bar"></span><button class="logout-btn" onclick="doLogout()">Sign out</button></div>
+</div>
+<div class="nav" id="teacher-nav">
+  <div class="nav-tab active" onclick="teacherTab('sets',this)">Sets</div>
+  <div class="nav-tab" onclick="teacherTab('create',this)">Create Set</div>
+  <div class="nav-tab" onclick="teacherTab('students',this)">Students</div>
+</div>
+<div class="content">
+  <div id="ttab-sets"><div class="section-title">All vocabulary sets</div><div id="teacher-sets-list"></div></div>
+  <div id="ttab-create" style="display:none">
+    <div class="card">
+      <div style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px" id="create-set-heading">Create a new vocabulary set</div>
+      <label>Set title</label><input type="text" id="t-new-set-title" placeholder="e.g. Chapter 1 Nouns"/>
+      <label style="margin-top:16px">Words</label>
+      <div class="word-list-header"><span>Latin</span><span>English</span><span style="flex:0.4">Notes (optional)</span></div>
+      <div id="t-word-list-wrap"></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addTeacherWordRow()">+ Add word</button>
+      <div class="btn-row" style="margin-top:16px"><button class="btn btn-primary" onclick="saveTeacherSet()">Save set</button><button class="btn btn-ghost btn-sm" onclick="cancelEdit()">Cancel</button></div>
+    </div>
+  </div>
+  <div id="ttab-students" style="display:none"><div class="section-title">Student activity</div><div id="teacher-student-list"></div></div>
+</div>
+</div>
+
+<!-- STUDY -->
+<div class="screen" id="screen-study">
+<div class="top-bar">
+  <div><div class="top-bar-brand" id="study-set-title-bar">Studying</div></div>
+  <button class="logout-btn" onclick="exitStudy()">Exit study</button>
+</div>
+<div class="content">
+  <div id="level-banner" style="display:none;margin-bottom:12px;padding:10px 14px;border-radius:var(--radius);font-size:13px;background:var(--gold-bg);border:1px solid rgba(139,105,20,0.25);color:var(--gold)"></div>
+  <div id="free-practice-banner" style="display:none;margin-bottom:12px;padding:10px 14px;border-radius:var(--radius);font-size:13px;background:var(--blue-light);border:1px solid rgba(24,95,165,0.25);color:var(--blue)">Extra practice &mdash; this session will not affect your progress or scheduling.</div>
+  <div class="mode-selector">
+    <div class="mode-btn active" id="btn-flip" onclick="trySetModeBtn('flip',this)"><div>Level 1 &middot; Flip card</div><div id="btn-flip-sub" style="font-size:11px;opacity:0.75;margin-top:2px">L &rarr; E</div></div>
+    <div class="mode-btn" id="btn-mc" onclick="trySetModeBtn('mc',this)"><div>Level 2 &middot; Multiple choice</div><div id="btn-mc-sub" style="font-size:11px;opacity:0.75;margin-top:2px">L &rarr; E</div></div>
+    <div class="mode-btn" id="btn-type" onclick="trySetModeBtn('type',this)"><div>Level 3 &middot; Type answer</div><div id="btn-type-sub" style="font-size:11px;opacity:0.75;margin-top:2px">L &rarr; E</div></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span style="font-size:13px;color:var(--text2)" id="study-progress-label">Card 0 / 0</span>
+    <button class="dir-toggle" onclick="toggleDirection()" id="dir-toggle">&#x1F504; Latin &rarr; English</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="study-prog" style="width:0%"></div></div>
+
+  <!-- FLIP MODE -->
+  <div id="mode-flip">
+    <div class="flashcard-scene">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <div class="card-face card-front"><div class="card-lang" id="front-lang">Latin</div><div class="card-word" id="front-word">&mdash;</div><div class="card-hint">Tap or press Space to reveal</div></div>
+        <div class="card-face card-back"><div class="card-lang" id="back-lang">English</div><div class="card-word" id="back-word">&mdash;</div><div class="card-notes" id="back-notes"></div></div>
+      </div>
+    </div>
+    <div id="flip-reveal-btn"><button class="btn btn-ghost" onclick="flipCard()">Reveal answer</button></div>
+    <div id="flip-back-btn" style="display:none;margin-bottom:8px"><button class="btn btn-ghost" onclick="flipCard()">&larr; Flip back</button></div>
+    <div id="flip-rate-btns" style="display:none">
+      <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:10px;font-style:italic">How well did you know it?</div>
+      <div class="btn-row">
+        <button class="btn btn-danger btn-sm" style="flex:1" onclick="rateCard(0)">Again</button>
+        <button class="btn btn-sm" style="flex:1" onclick="rateCard(2)">Hard</button>
+        <button class="btn btn-sm" style="flex:1" onclick="rateCard(3)">Good</button>
+        <button class="btn btn-success btn-sm" style="flex:1" onclick="rateCard(5)">Easy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MC MODE -->
+  <div id="mode-mc" style="display:none">
+    <div class="card" style="margin-bottom:14px;text-align:center"><div class="card-lang" id="mc-front-lang">Latin</div><div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--text);padding:12px 0" id="mc-question">&mdash;</div></div>
+    <div id="mc-options"></div>
+  </div>
+
+  <!-- TYPE MODE -->
+  <div id="mode-type" style="display:none">
+    <div class="card" style="margin-bottom:14px;text-align:center"><div class="card-lang" id="type-front-lang">Latin</div><div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--text);padding:12px 0" id="type-question">&mdash;</div></div>
+    <label>Your answer</label>
+    <input type="text" id="type-answer" placeholder="Type the translation&hellip;" onkeydown="handleTypeEnter(event)"/>
+    <div class="type-feedback" id="type-feedback"></div>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="checkTypeAnswer()" id="type-check-btn">Check answer</button>
+    <button class="btn btn-ghost" style="display:none;margin-top:8px" id="type-next-btn" onclick="nextCard()">Next card &rarr;</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="mode-results" style="display:none">
+    <div class="result-feedback">
+      <div class="result-big" id="result-emoji">&#x1F3DB;</div>
+      <div class="result-msg" id="result-msg">Session complete!</div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="stat-grid" style="margin:1.8rem 0">
+        <div class="stat-card" id="res-correct-card"><div class="stat-val" id="res-correct">0</div><div class="stat-lbl">Correct</div></div>
+        <div class="stat-card"><div class="stat-val" id="res-cards">0</div><div class="stat-lbl">Reviewed</div></div>
+        <div class="stat-card"><div class="stat-val" id="res-time">0m</div><div class="stat-lbl">Time</div></div>
+      </div>
+      <div style="margin-bottom:1.5rem" id="xp-earned-display"></div>
+      <div id="results-next-level" style="display:none;margin-bottom:10px"></div>
+      <button class="btn btn-primary" onclick="exitStudy()">Back to sets</button>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end .app -->
+<div id="toast"></div>
+<script>
+const DB_KEY='verbum_db_v2';
+function getDB(){try{return JSON.parse(localStorage.getItem(DB_KEY))||initDB();}catch(e){return initDB();}}
+function saveDB(db){localStorage.setItem(DB_KEY,JSON.stringify(db));}
+
+function initDB(){
+  const db={
+    users:{
+      teacher:{password:'latin123',role:'teacher',streak:0,lastStudyDay:null},
+      student1:{password:'latin123',role:'student',streak:0,lastStudyDay:null},
+      student2:{password:'latin123',role:'student',streak:0,lastStudyDay:null}
+    },
+    sets:[
+      {id:'set1',title:'Chapter 1: Basic Nouns',createdBy:'teacher',words:[
+        {latin:'puella',english:'girl',notes:'f. 1st decl.'},{latin:'puer',english:'boy',notes:'m. 2nd decl.'},
+        {latin:'terra',english:'land / earth',notes:'f. 1st decl.'},{latin:'aqua',english:'water',notes:'f. 1st decl.'},
+        {latin:'silva',english:'forest / wood',notes:'f. 1st decl.'},{latin:'via',english:'road / way',notes:'f. 1st decl.'},
+        {latin:'dominus',english:'master / lord',notes:'m. 2nd decl.'},{latin:'servus',english:'slave',notes:'m. 2nd decl.'},
+        {latin:'filius',english:'son',notes:'m. 2nd decl.'},{latin:'filia',english:'daughter',notes:'f. 1st decl.'}
+      ]},
+      {id:'set2',title:'Chapter 2: Essential Verbs',createdBy:'teacher',words:[
+        {latin:'amare',english:'to love',notes:'1st conj.'},{latin:'videre',english:'to see',notes:'2nd conj.'},
+        {latin:'venire',english:'to come',notes:'4th conj.'},{latin:'ire',english:'to go',notes:'irreg.'},
+        {latin:'esse',english:'to be',notes:'irreg.'},{latin:'dicere',english:'to say / tell',notes:'3rd conj.'},
+        {latin:'facere',english:'to make / do',notes:'3rd conj.'},{latin:'dare',english:'to give',notes:'1st conj. irreg.'},
+        {latin:'habere',english:'to have / hold',notes:'2nd conj.'},{latin:'ducere',english:'to lead',notes:'3rd conj.'}
+      ]},
+      {id:'set3',title:'Chapter 3: Adjectives',createdBy:'teacher',words:[
+        {latin:'magnus',english:'great / large',notes:'2-1-2 adj.'},{latin:'parvus',english:'small / little',notes:'2-1-2 adj.'},
+        {latin:'bonus',english:'good',notes:'2-1-2 adj.'},{latin:'malus',english:'bad / evil',notes:'2-1-2 adj.'},
+        {latin:'novus',english:'new',notes:'2-1-2 adj.'},{latin:'antiquus',english:'ancient / old',notes:'2-1-2 adj.'},
+        {latin:'clarus',english:'famous / clear',notes:'2-1-2 adj.'},{latin:'pulcher',english:'beautiful',notes:'2-1-2 adj.'}
+      ]}
+    ,
+      {id:'set4',title:'Top 50 Latin Words',createdBy:'teacher',words:[
+        {latin:'et',english:'and / also',notes:'conj.'},
+        {latin:'sum esse fuī futūrum',english:'to be',notes:'irreg. verb'},
+        {latin:'quī quae quod',english:'who / which / that',notes:'rel. pronoun'},
+        {latin:'que',english:'and',notes:'enclitic conj.'},
+        {latin:'in',english:'in / into / on / against',notes:'prep. + abl./acc.'},
+        {latin:'nŏn',english:'not',notes:'adv.'},
+        {latin:'hic haec hoc',english:'this / this one',notes:'demonstr. pronoun'},
+        {latin:'ille illa illud',english:'that / he / she / it',notes:'demonstr. pronoun'},
+        {latin:'tū tuī tibi tē',english:'you (sing.)',notes:'2nd pers. pronoun'},
+        {latin:'cum',english:'with / when / since / although',notes:'prep. + abl. / conj.'},
+        {latin:'ego meī mihi mē',english:'I / me',notes:'1st pers. pronoun'},
+        {latin:'is ea id',english:'he / she / it / this / that',notes:'demonstr. pronoun'},
+        {latin:'ad',english:'to / toward / near',notes:'prep. + acc.'},
+        {latin:'ut / utī',english:'so that / as / when',notes:'conj.'},
+        {latin:'sī',english:'if',notes:'conj.'},
+        {latin:'sui sibi sē / sēsē',english:'himself / herself / itself / themselves',notes:'reflex. pronoun'},
+        {latin:'omnis -e',english:'all / every / whole',notes:'3rd decl. adj.'},
+        {latin:'nec',english:'and not / nor / not even',notes:'conj.'},
+        {latin:'sed',english:'but',notes:'conj.'},
+        {latin:'ā ab abs',english:'from / away from / by',notes:'prep. + abl.'},
+        {latin:'ipse ipsa ipsum',english:'himself / herself / itself',notes:'intensive pronoun'},
+        {latin:'possum posse potuī',english:'to be able / can',notes:'irreg. verb'},
+        {latin:'aut',english:'or',notes:'conj.'},
+        {latin:'māgnus -a -um',english:'great / large / important',notes:'2-1-2 adj.'},
+        {latin:'ex / ē',english:'out of / from',notes:'prep. + abl.'},
+        {latin:'suus -a -um',english:'his own / her own / its own / their own',notes:'reflex. poss. adj.'},
+        {latin:'dŏ dare dedī datum',english:'to give',notes:'1st conj. irreg.'},
+        {latin:'quam',english:'than / how / as',notes:'adv. / conj.'},
+        {latin:'per',english:'through / throughout / by means of',notes:'prep. + acc.'},
+        {latin:'videŏ vidēre vīdī vīsum',english:'to see / to observe',notes:'2nd conj.'},
+        {latin:'faciŏ facere fēcī factum',english:'to make / to do',notes:'3rd conj. i-stem'},
+        {latin:'dīcŏ dīcere dīxī dictum',english:'to say / to tell / to speak',notes:'3rd conj.'},
+        {latin:'iam',english:'now / already / soon',notes:'adv.'},
+        {latin:'atque',english:'and / and also / and even',notes:'conj.'},
+        {latin:'ac',english:'and / and also',notes:'conj. (before consonants)'},
+        {latin:'alius -a -ud',english:'other / another / different',notes:'2-1-2 adj. irreg.'},
+        {latin:'rēs reī f.',english:'thing / matter / affair / situation',notes:'5th decl. f.'},
+        {latin:'habeŏ habēre habuī habitum',english:'to have / to hold / to consider',notes:'2nd conj.'},
+        {latin:'animus -ī m.',english:'mind / spirit / soul / courage',notes:'2nd decl. m.'},
+        {latin:'meus -a -um',english:'my / mine',notes:'poss. adj.'},
+        {latin:'deus -ī m. / dea -ae f.',english:'god / goddess',notes:'2nd decl. m. / 1st decl. f.'},
+        {latin:'multus -a -um',english:'much / many',notes:'2-1-2 adj.'},
+        {latin:'tuus -a -um',english:'your / yours (sing.)',notes:'poss. adj.'},
+        {latin:'ferŏ ferre tulī lātum',english:'to carry / to bear / to bring',notes:'irreg. verb'},
+        {latin:'dē',english:'down from / about / concerning',notes:'prep. + abl.'},
+        {latin:'nē',english:'not / lest / so that not',notes:'neg. particle / conj.'},
+        {latin:'manus -ūs f.',english:'hand / band of men',notes:'4th decl. f.'},
+        {latin:'nūlus -a -um',english:'no / none / not any',notes:'2-1-2 adj. irreg.'},
+        {latin:'nunc',english:'now / at present',notes:'adv.'},
+        {latin:'nŏs nostrum / nostrī nŋbīs nŋs',english:'we / us',notes:'1st pers. pl. pronoun'}
+      ]}
+    ],
+    progress:{},setStage:{},typePasses:{},sessions:[]
+  };
+  saveDB(db);return db;
+}
+
+/* ── CONSTANTS ── */
+var STAGE_MODE=['flip','mc','mc','type','type'];
+var STAGE_DIR=['latin-english','latin-english','english-latin','latin-english','english-latin'];
+var STAGE_LABELS=['1 \u00b7 Flip L\u2192E','2 \u00b7 MC L\u2192E','3 \u00b7 MC E\u2192L','4 \u00b7 Type L\u2192E','5 \u00b7 Type E\u2192L'];
+var LEVEL_BANDS=[
+  {label:'Beginner',cls:'badge-beginner',min:0,max:20},
+  {label:'Familiar',cls:'badge-familiar',min:20,max:45},
+  {label:'Advanced',cls:'badge-advanced',min:45,max:75},
+  {label:'Expert',cls:'badge-expert',min:75,max:100}
+];
+var LEARNING_INTERVALS_MIN=[0,2,10,30,120,300,480,720,720];
+var LEARNING_PHASE_STEPS=8;
+var SM2_START_EF=1.3;
+var SM2_START_INTERVAL_DAYS=1;
+
+let currentUser=null,currentRole=null,studySession=null,studyMode='flip',studyDirection='latin-english';
+
+/* ── SHARED HELPERS ── */
+function updateDirToggleText(){document.getElementById('dir-toggle').textContent='\u{1F504} '+(studyDirection==='latin-english'?'Latin \u2192 English':'English \u2192 Latin');}
+
+/* ── AUTH ── */
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');}
+function switchAuthTab(tab){
+  document.getElementById('login-form').style.display=tab==='login'?'':'none';
+  document.getElementById('register-form').style.display=tab==='register'?'':'none';
+  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('tab-register').classList.toggle('active',tab==='register');
+}
+function doLogin(){
+  const user=document.getElementById('login-user').value.trim(),pass=document.getElementById('login-pass').value;
+  const db=getDB();
+  if(!db.users[user]||db.users[user].password!==pass){toast('Invalid username or password');return;}
+  currentUser=user;currentRole=db.users[user].role;
+  updateStreak(db,user);
+  if(currentRole==='teacher'){show('teacher');renderTeacher();}else{show('student');renderStudent();}
+}
+function doRegister(){
+  const user=document.getElementById('reg-user').value.trim(),pass=document.getElementById('reg-pass').value.trim(),role=document.getElementById('reg-role').value;
+  if(!user||!pass){toast('Please fill in all fields');return;}
+  if(!/^[a-zA-Z0-9_]+$/.test(user)){toast('Username: letters, numbers, underscores only');return;}
+  const db=getDB();
+  if(db.users[user]){toast('Username already taken');return;}
+  db.users[user]={password:pass,role,streak:0,lastStudyDay:null};
+  saveDB(db);toast('Account created! Sign in now.');switchAuthTab('login');
+  document.getElementById('login-user').value=user;
+}
+function doLogout(){currentUser=null;currentRole=null;document.getElementById('login-user').value='';document.getElementById('login-pass').value='';show('login');}
+function updateStreak(db,user){
+  const today=new Date().toDateString(),u=db.users[user];
+  if(u.lastStudyDay===today)return;
+  const yest=new Date();yest.setDate(yest.getDate()-1);
+  if(u.lastStudyDay===yest.toDateString())u.streak=(u.streak||0)+1;
+  else if(u.lastStudyDay&&u.lastStudyDay!==today)u.streak=0;
+  u.lastStudyDay=today;saveDB(db);
+}
+
+/* ── MASTERY ── */
+function getSetStage(user,setId,db){if(!db.setStage)db.setStage={};return db.setStage[user+'_'+setId]||0;}
+function getSetMastery(user,setId,db){
+  if(!db.setStage)db.setStage={};if(!db.typePasses)db.typePasses={};if(!db.chunkStage)db.chunkStage={};
+  const set=db.sets.find(function(s){return s.id===setId;});
+  const stage=db.setStage[user+'_'+setId]||0,passes=db.typePasses[user+'_'+setId]||0,NEEDED=5;
+  var pct,label,stageLabel,mastStage,unlockedStage=stage;
+  // ── CHUNK PHASE: set has >10 words and chunks not yet all cleared ──
+  if(set&&set.words.length>CHUNK_SIZE&&!allChunksDone(user,setId,db)){
+    const total=getChunkCount(set);
+    var doneChunks=0;
+    for(var i=0;i<total;i++)if(getChunkStage(user,setId,i,db)>=2)doneChunks++;
+    const curChunk=getCurrentChunk(user,setId,db)||0;
+    const chunkSt=getChunkStage(user,setId,curChunk,db);
+    // Chunk phase covers 0-40% of the mastery bar
+    const chunkPct=Math.round(((doneChunks+(chunkSt/2))/total)*40);
+    const chunkStart=curChunk*CHUNK_SIZE+1;
+    const chunkEnd=Math.min((curChunk+1)*CHUNK_SIZE,set.words.length);
+    stageLabel='Words '+chunkStart+'-'+chunkEnd+' (Chunk '+(curChunk+1)+'/'+total+')';
+    label='Chunk '+(curChunk+1)+' of '+total+': '+(chunkSt===0?'Flip cards':(chunkSt===1?'MC L>E':'Done'));
+    pct=chunkPct;mastStage=0;unlockedStage=0;
+    return{stage:mastStage,pct:pct,label:label,stageLabel:stageLabel,passes:passes,unlockedStage:unlockedStage,chunking:true,currentChunk:curChunk,totalChunks:total};
+  }
+  // ── FULL-SET PHASE ──
+  // For sets that went through chunking, full-set stages 2-4 cover 40-100%.
+  // For sets that never needed chunking (<=10 words), stages 0-4 cover 0-100%.
+  var hadChunking=set&&set.words.length>CHUNK_SIZE;
+  if(stage<4){
+    if(hadChunking){
+      // Stages 2-4 cover 40-100% (stage 2 = 40%, stage 3 = 60%, stage 4 = 80%)
+      pct=Math.round(40+((stage-2)/3)*60);
+      if(pct<40)pct=40;
+    }else{
+      // No chunking: stages 0-3 cover 0-80% evenly
+      pct=Math.round((stage/5)*80);
+    }
+    label='Stage '+(stage+1)+' of 5';stageLabel=STAGE_LABELS[stage];mastStage=stage;
+  }else if(passes>=NEEDED){
+    pct=100;label='Mastered';stageLabel='Mastered';mastStage=5;
+  }else{
+    pct=80+Math.round((passes/NEEDED)*20);
+    label='Type E>L: '+passes+'/5 perfect sessions';
+    stageLabel=passes+'/5 E>L passes';mastStage=4;
+  }
+  return{stage:mastStage,pct:pct,label:label,stageLabel:stageLabel,passes:passes,unlockedStage:unlockedStage,chunking:false};
+}
+function getAvgMastery(user,db){
+  if(!db.sets||db.sets.length===0)return 0;
+  return Math.round(db.sets.reduce((s,set)=>s+getSetMastery(user,set.id,db).pct,0)/db.sets.length);
+}
+function getStudentLevel(user,db){
+  const avg=getAvgMastery(user,db);
+  for(var i=LEVEL_BANDS.length-1;i>=0;i--)if(avg>=LEVEL_BANDS[i].min)return Object.assign({},LEVEL_BANDS[i],{avg});
+  return Object.assign({},LEVEL_BANDS[0],{avg});
+}
+
+/* ── CHUNK HELPERS ── */
+var CHUNK_SIZE=10;
+
+function getChunkCount(set){
+  if(!set||set.words.length<=CHUNK_SIZE)return 1;
+  return Math.ceil(set.words.length/CHUNK_SIZE);
+}
+
+function getChunkWords(set,chunkIdx){
+  // Returns words for chunk (0-based index). Includes all words up to and including this chunk.
+  var end=Math.min((chunkIdx+1)*CHUNK_SIZE,set.words.length);
+  return set.words.slice(0,end);
+}
+
+function getChunkOnlyWords(set,chunkIdx){
+  // Returns only the words in this specific chunk
+  var start=chunkIdx*CHUNK_SIZE;
+  var end=Math.min((chunkIdx+1)*CHUNK_SIZE,set.words.length);
+  return set.words.slice(start,end);
+}
+
+function getChunkStage(user,setId,chunkIdx,db){
+  if(!db.chunkStage)db.chunkStage={};
+  return db.chunkStage[user+'_'+setId+'_'+chunkIdx]||0;
+  // 0=not started, 1=flip done, 2=MC L>E done (chunk complete)
+}
+
+function getCurrentChunk(user,setId,db){
+  const set=db.sets.find(s=>s.id===setId);if(!set)return 0;
+  const total=getChunkCount(set);
+  if(total===1)return null; // no chunking needed
+  for(var i=0;i<total;i++){
+    if(getChunkStage(user,setId,i,db)<2)return i;
+  }
+  return null; // all chunks done, use full set
+}
+
+function allChunksDone(user,setId,db){
+  const set=db.sets.find(s=>s.id===setId);if(!set)return true;
+  const total=getChunkCount(set);
+  if(total===1)return true;
+  for(var i=0;i<total;i++){
+    if(getChunkStage(user,setId,i,db)<2)return false;
+  }
+  return true;
+}
+
+function isChunkingActive(user,setId,db){
+  // Chunking applies when set has >10 words AND not all chunks cleared
+  const set=db.sets.find(s=>s.id===setId);if(!set)return false;
+  return set.words.length>CHUNK_SIZE&&!allChunksDone(user,setId,db);
+}
+
+function isChunkGated(user,setId,db){
+  // Returns true if the current chunk is new and the interval gate is active
+  // (i.e. no words from the previous chunk are due yet)
+  if(!isChunkingActive(user,setId,db))return false;
+  const set=db.sets.find(function(s){return s.id===setId;});if(!set)return false;
+  const ci=getCurrentChunk(user,setId,db)||0;
+  if(ci===0)return false; // first chunk is never gated
+  // Check if this chunk has been started
+  const chunkStart=ci*CHUNK_SIZE;
+  const chunkEnd=Math.min((ci+1)*CHUNK_SIZE,set.words.length);
+  for(var wi=chunkStart;wi<chunkEnd;wi++){
+    const p=db.progress[user+'_'+setId+'_'+wi];
+    if(p&&p.reps>0)return false; // chunk already started, not gated
+  }
+  // Chunk not started — check if any previous words are due
+  const today=new Date();
+  for(var wi2=0;wi2<chunkStart;wi2++){
+    const p=db.progress[user+'_'+setId+'_'+wi2];
+    if(!p||!p.nextReview||new Date(p.nextReview)<=today)return false; // prev words due, not gated
+  }
+  return true; // all prev words in future = gated
+}
+
+function getAccessibleWords(user,setId,db){
+  // Returns words the student can actually study right now.
+  // During chunking: if the current chunk is interval-gated (new chunk,
+  // previous words not yet due), return only previous chunks' words.
+  // Otherwise return words up to and including the current chunk.
+  const set=db.sets.find(function(s){return s.id===setId;});
+  if(!set)return[];
+  if(isChunkingActive(user,setId,db)){
+    const ci=getCurrentChunk(user,setId,db)||0;
+    if(isChunkGated(user,setId,db)){
+      // New chunk not yet accessible — only previous chunks' words count
+      if(ci===0)return[];
+      return getChunkWords(set,ci-1);
+    }
+    return getChunkWords(set,ci);
+  }
+  return set.words;
+}
+
+/* ── STREAK MESSAGE ── */
+function getStreakMsg(streak){
+  var milestones={0:'Incipiamus!',7:'Septem dies! Magister probat 🎉',31:'Unus mensis! Magister te laudat 🎉',100:'Mirabile visu! Centum dies! 🎉'};
+  if(milestones[streak]!==undefined)return milestones[streak];
+  var pool=['Keep it going!','Building momentum!','You\'re on a roll!','Come back tomorrow!','Keep it up!'];
+  if(streak>7)pool=pool.concat(['Impressive!','Remarkable!','Extraordinary!']);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+/* ── STUDENT RENDER ── */
+function renderStudent(){
+  const db=getDB(),u=db.users[currentUser];
+  document.getElementById('student-name-bar').textContent=currentUser;
+  document.getElementById('s-welcome-name').textContent=currentUser;
+  document.getElementById('s-streak').textContent=u.streak||0;
+  document.getElementById('s-streak-msg').textContent=getStreakMsg(u.streak||0);
+  const level=getStudentLevel(currentUser,db);
+  document.getElementById('s-level-badge').innerHTML='<span class="badge '+level.cls+'">'+level.label+'</span>';
+  document.getElementById('s-xp-label').textContent=level.avg+'% avg mastery';
+  const bandSpan=level.max-level.min,bandProg=Math.min(100,Math.round(((level.avg-level.min)/bandSpan)*100));
+  document.getElementById('s-xp-bar').style.width=bandProg+'%';
+  const nextIdx=LEVEL_BANDS.findIndex(b=>b.label===level.label)+1;
+  document.getElementById('s-xp-next').textContent=level.label==='Expert'?'Mastery achieved!':'Next: '+LEVEL_BANDS[nextIdx].label+' at '+level.max+'%';
+  const today=new Date();let dueWords=0,masteredSets=0,inProgressSets=0;
+  db.sets.forEach(set=>{
+    const accessible=getAccessibleWords(currentUser,set.id,db);
+    accessible.forEach((w,wi)=>{
+      const p=db.progress[currentUser+'_'+set.id+'_'+wi];
+      if(!p||!p.nextReview||new Date(p.nextReview)<=today)dueWords++;
+    });
+    const m=getSetMastery(currentUser,set.id,db);
+    if(m.pct===100)masteredSets++;else if(m.stage>0)inProgressSets++;
+  });
+  document.getElementById('s-total-words').textContent=dueWords;
+  document.getElementById('s-mastered').textContent=masteredSets+'/'+db.sets.length;
+  document.getElementById('s-due').textContent=inProgressSets;
+  renderHomeDue();renderProgressTab();initStudentWordRows();
+}
+function renderHomeDue(){
+  const db=getDB(),today=new Date(),div=document.getElementById('home-due-sets');
+  div.innerHTML='';
+  db.sets.forEach(set=>{
+    let setDue=0;
+    const accessibleHome=getAccessibleWords(currentUser,set.id,db);
+    accessibleHome.forEach((w,wi)=>{
+      const p=db.progress[currentUser+'_'+set.id+'_'+wi];
+      if(!p||!p.nextReview||new Date(p.nextReview)<=today)setDue++;
+    });
+    if(setDue>0){
+      const stage=getSetStage(currentUser,set.id,db),modeLabel=STAGE_LABELS[stage];
+      const el=document.createElement('div');el.className='set-item';
+      el.innerHTML='<div><div class="set-name">'+esc(set.title)+'</div><div class="set-meta">'+setDue+' card'+(setDue!==1?'s':'')+' due &middot; Mode: '+modeLabel+'</div></div>'
+        +'<div class="set-actions">'
+        +'<button class="btn btn-primary btn-sm" onclick="startStudyOrRefresh(&quot;'+set.id+'&quot;)">Study now</button>'
+        +'<button class="btn btn-ghost btn-sm" onclick="startFreePractice(&quot;'+set.id+'&quot;)">Extra practice</button>'
+        +'</div>';
+      div.appendChild(el);
+    }
+  });
+  if(!div.children.length)div.innerHTML='<div class="empty-state">You\'re all caught up! Come back for your next review.</div>';
+}
+function stageBadge(stage,stageLabel){
+  var styles=['badge-new','badge-beginner','badge-familiar','badge-advanced','badge-expert'];
+  return'<span class="badge '+(styles[stage]||'badge-new')+'">'+stageLabel+'</span>';
+}
+function renderProgressTab(){
+  const db=getDB(),today=new Date(),div=document.getElementById('progress-detail');div.innerHTML='';
+  db.sets.forEach((set,si)=>{
+    const m=getSetMastery(currentUser,set.id,db);
+    const sessions=db.sessions.filter(s=>s.user===currentUser&&s.setId===set.id);
+    const totalSec=sessions.reduce((a,s)=>a+(s.duration||0),0),mn=Math.floor(totalSec/60),sc=totalSec%60;
+    const fillColor=m.stage===5?'var(--purple)':m.stage>=3?'var(--gold)':'var(--teal)';
+    const accessibleProg=getAccessibleWords(currentUser,set.id,db);
+    let setDue=0;
+    accessibleProg.forEach((w,wi)=>{
+      const p=db.progress[currentUser+'_'+set.id+'_'+wi];
+      if(!p||!p.nextReview||new Date(p.nextReview)<=today)setDue++;
+    });
+    let nextDueForSet=null;
+    if(setDue===0){
+      accessibleProg.forEach((w,wi)=>{
+        const p=db.progress[currentUser+'_'+set.id+'_'+wi];
+        if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDueForSet||d<nextDueForSet)nextDueForSet=d;}
+      });
+    }
+    const nothingLabel=nextDueForSet?'Next review '+formatNextDue(nextDueForSet):'Nothing due yet';
+    const studyBtn=setDue>0
+      ?'<button class="btn btn-primary btn-sm" onclick="startStudyOrRefresh(&quot;'+set.id+'&quot;)">Study ('+setDue+' due)</button>'
+      :'<button class="btn btn-sm" style="opacity:0.5;cursor:default;font-size:12px" disabled>'+nothingLabel+'</button>';
+    const canEdit=set.createdBy===currentUser;
+    const collapseId='progress-detail-'+si;
+    var stepsHtml='';
+    if(m.chunking){
+      var totalChunks2=m.totalChunks;
+      for(var ci3=0;ci3<totalChunks2;ci3++){
+        const cs2=getChunkStage(currentUser,set.id,ci3,db);
+        const cS2=ci3*CHUNK_SIZE+1,cE2=Math.min((ci3+1)*CHUNK_SIZE,set.words.length);
+        stepsHtml+='<div style="margin-bottom:6px"><div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px">Words '+cS2+'-'+cE2+'</div>';
+        var flipDone=cs2>=1,mcDone=cs2>=2;
+        stepsHtml+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;margin-left:10px"><span style="font-size:13px">'+(flipDone?'\u2713':'\u25cb')+'</span><span style="font-size:12px;color:'+(flipDone?'var(--teal)':'var(--text3)')+'">Flip cards</span></div>';
+        stepsHtml+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;margin-left:10px"><span style="font-size:13px">'+(mcDone?'\u2713':'\u25cb')+'</span><span style="font-size:12px;color:'+(mcDone?'var(--teal)':'var(--text3)')+'">MC L&gt;E</span></div>';
+        stepsHtml+='</div>';
+      }
+      stepsHtml+='<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic">Complete all chunks to unlock full-set levels 3-5.</div>';
+    }else{
+      var lvlSteps=[
+        {done:m.unlockedStage>=1,label:'Level 1: Flip card (L&gt;E)'},
+        {done:m.unlockedStage>=2,label:'Level 2: MC L&gt;E (100%)'},
+        {done:m.unlockedStage>=3,label:'Level 3: MC E&gt;L (100%)'},
+        {done:m.unlockedStage>=4,label:'Level 4: Type L&gt;E (100%)'},
+        {done:m.unlockedStage>=5||(m.unlockedStage===4&&m.passes>=5),label:'Level 5: Type E&gt;L x 5 perfect sessions'}
+      ];
+      lvlSteps.forEach(function(s){stepsHtml+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><span style="font-size:14px">'+(s.done?'\u2713':'\u25cb')+'</span><span style="font-size:13px;color:'+(s.done?'var(--teal)':'var(--text3)')+'">'+s.label+'</span></div>';});
+    }
+    const card=document.createElement('div');card.className='card';card.style.marginBottom='12px';
+    card.innerHTML=
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+        +'<div style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;min-width:0" onclick="toggleProgressDetail(&quot;'+collapseId+'&quot;)">'
+          +'<span id="'+collapseId+'-arrow" style="font-size:12px;color:var(--text3);display:inline-block;transition:transform 0.2s">▼</span>'
+          +'<div style="min-width:0"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(set.title)+'</div>'
+          +'<div style="font-size:12px;color:var(--text3);margin-top:2px">'+stageBadge(m.stage,m.stageLabel)+'   '+m.pct+'%</div></div>'
+        +'</div>'
+        +'<div class="set-actions" style="flex-shrink:0;margin-left:8px">'
+          +(canEdit?'<button class="btn btn-ghost btn-sm" onclick="editStudentSet(&quot;'+set.id+'&quot;)">Edit</button>':'')+studyBtn
+          +'<button class="btn btn-ghost btn-sm" onclick="startFreePractice(&quot;'+set.id+'&quot;)">Extra practice</button>'
+        +'</div>'
+      +'</div>'
+      +'<div id="'+collapseId+'" style="display:none">'
+        +'<div style="margin-bottom:10px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:5px"><span>Mastery progress</span><span style="font-weight:600;color:var(--text)">'+m.pct+'%</span></div>'
+          +'<div class="progress-bar" style="margin:0;height:8px"><div style="height:100%;border-radius:999px;background:'+fillColor+';width:'+m.pct+'%;transition:width 0.4s"></div></div>'
+          +'<div style="font-size:12px;color:var(--text3);margin-top:5px;font-style:italic">'+m.label+'</div>'
+        +'</div>'
+        +'<div style="border-top:1px solid var(--border);padding-top:10px;margin-bottom:10px">'+stepsHtml+'</div>'
+        +'<div style="font-size:12px;color:var(--text3)">Study time: '+mn+'m '+sc+'s · '+sessions.length+' session'+(sessions.length!==1?'s':'')+'</div>'
+      +'</div>';
+    div.appendChild(card);
+  });
+  if(!div.children.length)div.innerHTML='<div class="empty-state">No sets to show yet.</div>';
+}
+
+function toggleProgressDetail(id){
+  const el=document.getElementById(id),arrow=document.getElementById(id+'-arrow');
+  if(!el)return;
+  const isOpen=el.style.display!=='none';
+  el.style.display=isOpen?'none':'';
+  if(arrow)arrow.style.transform=isOpen?'':'rotate(180deg)';
+}
+function studentTab(tab,el){
+  document.querySelectorAll('#student-nav .nav-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  ['home','progress','create'].forEach(t=>{document.getElementById('stab-'+t).style.display=t===tab?'':'none';});
+  if(tab==='progress')renderProgressTab();
+}
+
+/* ── TEACHER RENDER ── */
+function renderTeacher(){document.getElementById('teacher-name-bar').textContent=currentUser;renderTeacherSets();initTeacherWordRows();}
+function renderTeacherSets(){
+  const db=getDB(),div=document.getElementById('teacher-sets-list');div.innerHTML='';
+  db.sets.forEach(set=>{
+    const el=document.createElement('div');el.className='set-item';
+    el.innerHTML='<div><div class="set-name">'+esc(set.title)+'</div><div class="set-meta">'+set.words.length+' words &middot; by '+esc(set.createdBy)+'</div></div>'
+      +'<div class="set-actions"><button class="btn btn-ghost btn-sm" onclick="editSet(\''+set.id+'\')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteSet(\''+set.id+'\')">Delete</button></div>';
+    div.appendChild(el);
+  });
+  if(!div.children.length)div.innerHTML='<div class="empty-state">No sets yet \u2014 create one!</div>';
+}
+function renderTeacherStudents(){
+  const db=getDB(),div=document.getElementById('teacher-student-list');
+  const students=Object.entries(db.users).filter(([,u])=>u.role==='student');
+  div.innerHTML='';
+  if(!students.length){div.innerHTML='<div class="empty-state">No students have registered yet.</div>';return;}
+  const card=document.createElement('div');card.className='card';
+  const wrap=document.createElement('div');wrap.className='teacher-table-wrap';
+  let html='<table class="teacher-table"><thead><tr><th>Student</th><th>Streak</th><th>Level</th><th>Avg mastery</th>';
+  db.sets.forEach(s=>{html+='<th>'+esc(s.title.split(':')[0])+'</th>';});
+  html+='</tr></thead><tbody>';
+  students.forEach(([name,u])=>{
+    const level=getStudentLevel(name,db);
+    html+='<tr><td><strong>'+esc(name)+'</strong></td><td>&#x1F525; '+(u.streak||0)+'</td><td><span class="badge '+level.cls+'">'+level.label+'</span></td><td>'+level.avg+'%</td>';
+    db.sets.forEach(set=>{
+      const sessions=db.sessions.filter(s=>s.user===name&&s.setId===set.id);
+      const totalSec=sessions.reduce((a,s)=>a+(s.duration||0),0),mn=Math.floor(totalSec/60),sc=totalSec%60;
+      const mInfo=getSetMastery(name,set.id,db);
+      html+='<td>'+mInfo.pct+'% &middot; '+mInfo.stageLabel+' &middot; '+mn+'m'+sc+'s</td>';
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  wrap.innerHTML=html;card.appendChild(wrap);div.appendChild(card);
+}
+function teacherTab(tab,el){
+  document.querySelectorAll('#teacher-nav .nav-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  ['sets','create','students'].forEach(t=>{document.getElementById('ttab-'+t).style.display=t===tab?'':'none';});
+  if(tab==='students')renderTeacherStudents();if(tab==='sets')renderTeacherSets();
+}
+function cancelEdit(){
+  delete document.getElementById('t-new-set-title').dataset.editId;
+  document.getElementById('create-set-heading').textContent='Create a new vocabulary set';
+  document.getElementById('t-new-set-title').value='';initTeacherWordRows();
+  teacherTab('sets',document.querySelectorAll('#teacher-nav .nav-tab')[0]);
+}
+function deleteSet(id){
+  if(!confirm('Delete this vocabulary set?'))return;
+  const db=getDB();db.sets=db.sets.filter(s=>s.id!==id);saveDB(db);renderTeacherSets();toast('Set deleted');
+}
+function editSet(id){
+  const db=getDB(),set=db.sets.find(s=>s.id===id);if(!set)return;
+  teacherTab('create',document.querySelectorAll('#teacher-nav .nav-tab')[1]);
+  document.getElementById('create-set-heading').textContent='Edit vocabulary set';
+  document.getElementById('t-new-set-title').value=set.title;document.getElementById('t-new-set-title').dataset.editId=id;
+  const wrap=document.getElementById('t-word-list-wrap');wrap.innerHTML='';
+  set.words.forEach(w=>addTeacherWordRow(w.latin,w.english,w.notes||''));
+}
+function initTeacherWordRows(){const wrap=document.getElementById('t-word-list-wrap');wrap.innerHTML='';for(let i=0;i<4;i++)addTeacherWordRow();}
+function addTeacherWordRow(lat,eng,notes){
+  const wrap=document.getElementById('t-word-list-wrap'),row=document.createElement('div');row.className='word-row';
+  row.innerHTML='<input type="text" placeholder="e.g. aqua" value="'+esc(lat||'')+'" style="margin-top:0"/>'
+    +'<input type="text" placeholder="e.g. water" value="'+esc(eng||'')+'" style="margin-top:0"/>'
+    +'<input type="text" placeholder="notes" value="'+esc(notes||'')+'" style="margin-top:0;flex:0.4"/>'
+    +'<button class="remove-word" onclick="this.parentElement.remove()" title="Remove">\u2715</button>';
+  wrap.appendChild(row);
+}
+function saveTeacherSet(){
+  const title=document.getElementById('t-new-set-title').value.trim();
+  if(!title){toast('Please enter a set title');return;}
+  const rows=document.querySelectorAll('#t-word-list-wrap .word-row'),words=[];
+  rows.forEach(row=>{const inp=row.querySelectorAll('input');const l=inp[0].value.trim(),e=inp[1].value.trim(),n=inp[2]?inp[2].value.trim():'';if(l&&e)words.push({latin:l,english:e,notes:n});});
+  if(words.length<2){toast('Please add at least 2 words');return;}
+  const db=getDB(),editId=document.getElementById('t-new-set-title').dataset.editId;
+  if(editId){const idx=db.sets.findIndex(s=>s.id===editId);if(idx>=0){db.sets[idx].title=title;db.sets[idx].words=words;}delete document.getElementById('t-new-set-title').dataset.editId;document.getElementById('create-set-heading').textContent='Create a new vocabulary set';}
+  else{db.sets.push({id:'set_'+Date.now(),title,createdBy:currentUser,words});}
+  saveDB(db);toast('Set saved!');document.getElementById('t-new-set-title').value='';initTeacherWordRows();
+  teacherTab('sets',document.querySelectorAll('#teacher-nav .nav-tab')[0]);
+}
+function initStudentWordRows(){const wrap=document.getElementById('s-word-list-wrap');wrap.innerHTML='';for(let i=0;i<3;i++)addStudentWordRow();}
+function addStudentWordRow(lat,eng,notes){
+  const wrap=document.getElementById('s-word-list-wrap'),row=document.createElement('div');row.className='word-row';
+  row.innerHTML='<input type="text" placeholder="Latin" value="'+esc(lat||'')+'" style="margin-top:0"/>'
+    +'<input type="text" placeholder="English" value="'+esc(eng||'')+'" style="margin-top:0"/>'
+    +'<input type="text" placeholder="notes" value="'+esc(notes||'')+'" style="margin-top:0;flex:0.5"/>'
+    +'<button class="remove-word" onclick="this.parentElement.remove()" title="Remove">\u2715</button>';
+  wrap.appendChild(row);
+}
+function saveStudentSet(){
+  const title=document.getElementById('s-new-set-title').value.trim();
+  if(!title){toast('Please enter a set title');return;}
+  const rows=document.querySelectorAll('#s-word-list-wrap .word-row'),words=[];
+  rows.forEach(row=>{const inp=row.querySelectorAll('input');const l=inp[0].value.trim(),e=inp[1].value.trim(),n=inp[2]?inp[2].value.trim():'';if(l&&e)words.push({latin:l,english:e,notes:n});});
+  if(words.length<2){toast('Please add at least 2 words');return;}
+  const db=getDB(),editId=document.getElementById('s-new-set-title').dataset.editId;
+  if(editId){const idx=db.sets.findIndex(s=>s.id===editId);if(idx>=0){db.sets[idx].title=title;db.sets[idx].words=words;}delete document.getElementById('s-new-set-title').dataset.editId;document.getElementById('s-create-set-heading').textContent='Create a new set';document.getElementById('s-cancel-edit-btn').style.display='none';}
+  else{db.sets.push({id:'set_'+Date.now(),title,createdBy:currentUser,words});}
+  saveDB(db);toast('Set saved!');document.getElementById('s-new-set-title').value='';initStudentWordRows();
+  renderStudent();studentTab('progress',document.querySelectorAll('#student-nav .nav-tab')[1]);
+}
+function cancelStudentEdit(){
+  delete document.getElementById('s-new-set-title').dataset.editId;
+  document.getElementById('s-create-set-heading').textContent='Create a new set';
+  document.getElementById('s-cancel-edit-btn').style.display='none';
+  document.getElementById('s-new-set-title').value='';initStudentWordRows();
+}
+function editStudentSet(id){
+  const db=getDB(),set=db.sets.find(s=>s.id===id);if(!set)return;
+  studentTab('create',document.querySelectorAll('#student-nav .nav-tab')[2]);
+  document.getElementById('s-create-set-heading').textContent='Edit set';
+  document.getElementById('s-new-set-title').value=set.title;document.getElementById('s-new-set-title').dataset.editId=id;
+  document.getElementById('s-cancel-edit-btn').style.display='';
+  const wrap=document.getElementById('s-word-list-wrap');wrap.innerHTML='';
+  set.words.forEach(w=>addStudentWordRow(w.latin,w.english,w.notes||''));
+}
+
+/* ── SM-2 SCHEDULING ── */
+function getDueMode(setId,db){
+  if(isChunkingActive(currentUser,setId,db)){
+    const chunkIdx=getCurrentChunk(currentUser,setId,db);
+    const chunkSt=getChunkStage(currentUser,setId,chunkIdx,db);
+    return chunkSt===0?'flip':'mc';
+  }
+  return STAGE_MODE[getSetStage(currentUser,setId,db)];
+}
+function getDueDir(setId,db){
+  if(isChunkingActive(currentUser,setId,db))return 'latin-english';
+  return STAGE_DIR[getSetStage(currentUser,setId,db)];
+}
+function buildQueue(set,setId,db,dueOnly){
+  const today=new Date(),due=[],notDue=[];
+  // During chunking: only include words up to and including current chunk
+  var wordsToUse;
+  if(isChunkingActive(currentUser,setId,db)){
+    const chunkIdx=getCurrentChunk(currentUser,setId,db)||0;
+    wordsToUse=getChunkWords(set,chunkIdx);
+  }else{
+    wordsToUse=set.words;
+  }
+  wordsToUse.forEach((w,i)=>{
+    const key=currentUser+'_'+setId+'_'+i,p=db.progress[key]||{reps:0,ef:1.3,interval:0,nextReview:null};
+    const entry={wordIndex:i,word:w,progress:p,key};
+    (!p.nextReview||new Date(p.nextReview)<=today)?due.push(entry):notDue.push(entry);
+  });
+  if(dueOnly)return{due,notDue};return{due:[...due,...notDue],notDue:[]};
+}
+
+/* ── STUDY ENGINE ── */
+function startStudyOrRefresh(setId){
+  // Recalculate due count at click time before deciding whether to launch
+  const db=getDB(),set=db.sets.find(s=>s.id===setId);
+  if(!set){startStudy(setId);return;}
+  const today=new Date();
+  const accessible=getAccessibleWords(currentUser,setId,db);
+  let due=0;
+  accessible.forEach(function(w,wi){
+    const p=db.progress[currentUser+'_'+setId+'_'+wi];
+    if(!p||!p.nextReview||new Date(p.nextReview)<=today)due++;
+  });
+  if(due===0){
+    // Nothing actually due — re-render to update stale button, show next time
+    renderStudent();
+    let nextDueDate=null;
+    accessible.forEach(function(w,wi){
+      const p=db.progress[currentUser+'_'+setId+'_'+wi];
+      if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDueDate||d<nextDueDate)nextDueDate=d;}
+    });
+    if(nextDueDate)toast('No words due yet. Next review '+formatNextDue(nextDueDate)+'.');
+    else toast('No words due yet. Complete a session first!');
+    return;
+  }
+  startStudy(setId);
+}
+
+/* ── STUDY ENGINE ── */
+function startStudy(setId){
+  const db=getDB(),set=db.sets.find(s=>s.id===setId);if(!set)return;
+
+  // If chunking is active and the current chunk is brand new (never studied),
+  // block launch until the previous chunk has a due review — enforcing the interval.
+  if(isChunkingActive(currentUser,setId,db)){
+    const ci=getCurrentChunk(currentUser,setId,db)||0;
+    if(ci>0){
+      // Check whether any word in the current chunk has been seen
+      const chunkStart=ci*CHUNK_SIZE;
+      const chunkEnd=Math.min((ci+1)*CHUNK_SIZE,set.words.length);
+      let chunkStarted=false;
+      for(var wi2=chunkStart;wi2<chunkEnd;wi2++){
+        const p=db.progress[currentUser+'_'+setId+'_'+wi2];
+        if(p&&p.reps>0){chunkStarted=true;break;}
+      }
+      if(!chunkStarted){
+        // New chunk — check if previous chunk has due words yet
+        const prevEnd=chunkStart;
+        const today=new Date();
+        let anyDueInPrev=false,nextDueDate=null;
+        for(var wi3=0;wi3<prevEnd;wi3++){
+          const p=db.progress[currentUser+'_'+setId+'_'+wi3];
+          if(!p||!p.nextReview||new Date(p.nextReview)<=today){anyDueInPrev=true;break;}
+          if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDueDate||d<nextDueDate)nextDueDate=d;}
+        }
+        if(!anyDueInPrev){
+          if(nextDueDate)toast('Chunk '+(ci+1)+' unlocks when your previous words are due. Next review '+formatNextDue(nextDueDate)+'.');
+          else toast('Complete the previous chunk first!');
+          renderStudent();
+          return;
+        }
+      }
+    }
+  }
+
+  const autoMode=getDueMode(setId,db),{due,notDue}=buildQueue(set,setId,db,true);
+  let queue,hasDueOnly;
+  if(due.length>0){
+    queue=due;hasDueOnly=notDue.length>0;
+    if(due.length<set.words.length)toast(due.length+' word'+(due.length!==1?'s':'')+' due for review.');
+  }else{
+    let nextDueDate=null;
+    const accessibleWords=getAccessibleWords(currentUser,setId,db);
+    accessibleWords.forEach((w,wi)=>{
+      const p=db.progress[currentUser+'_'+setId+'_'+wi];
+      if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDueDate||d<nextDueDate)nextDueDate=d;}
+    });
+    if(nextDueDate)toast('No words due yet. Next review '+formatNextDue(nextDueDate)+'.');
+    else toast('No words due yet. Complete a session first!');
+    renderStudent();
+    return;
+  }
+  shuffle(queue);
+  studyMode=autoMode;studyDirection=getDueDir(setId,db);
+  const _startStage=getSetStage(currentUser,setId,db);
+  const _startChunk=isChunkingActive(currentUser,setId,db)?getCurrentChunk(currentUser,setId,db):null;
+  const _startChunkStage=_startChunk!==null?getChunkStage(currentUser,setId,_startChunk,db):null;
+  studySession={setId,set,queue,notDueWords:notDue,hasDueOnly,idx:0,correct:0,firstCorrect:0,total:queue.length,startTime:Date.now(),flipped:false,mode:autoMode,flipRated:0,flipTotal:queue.length,_startStage,_startChunk,_startChunkStage,freePractice:false,interacted:false};
+  document.getElementById('study-set-title-bar').textContent=set.title;
+  updateDirToggleText();
+  document.getElementById('free-practice-banner').style.display='none';
+  updateLevelUIScheduled(_startStage,autoMode,studyDirection);
+  ['flip','mc','type','results'].forEach(m=>{document.getElementById('mode-'+m).style.display=m===autoMode?'':'none';});
+  show('study');loadCard();
+}
+
+function startFreePractice(setId){
+  const db=getDB(),set=db.sets.find(s=>s.id===setId);if(!set)return;
+
+  // Determine the highest stage the student can practice.
+  // For chunked sets in the chunk phase: the highest completed chunk stage
+  // maps to flip (chunkStage>=1 on any chunk) or MC L>E (chunkStage>=2 on any chunk).
+  // For full-set phase: use curStage - 1 as before.
+  var practiceStage;
+  if(isChunkingActive(currentUser,setId,db)){
+    // Find the highest chunk stage completed across all chunks
+    const totalChunks=getChunkCount(set);
+    var maxChunkSt=0;
+    for(var ci=0;ci<totalChunks;ci++){
+      const cs=getChunkStage(currentUser,setId,ci,db);
+      if(cs>maxChunkSt)maxChunkSt=cs;
+    }
+    // chunkStage 0 = nothing done yet → flip only (stage 0)
+    // chunkStage 1 = flip done on some chunk → flip available (stage 0)
+    // chunkStage 2 = MC L>E done on some chunk → MC L>E available (stage 1)
+    // Cap to completed: if maxChunkSt>=2 allow MC (practiceStage=1), else flip only (0)
+    practiceStage=maxChunkSt>=2?1:0;
+  }else{
+    const curStage=getSetStage(currentUser,setId,db);
+    practiceStage=Math.max(0,curStage-1);
+  }
+
+  const practiceMode=STAGE_MODE[practiceStage];
+  const practiceDir=STAGE_DIR[practiceStage];
+
+  // Build queue from accessible words only (respects chunk gate)
+  const accessibleWords=getAccessibleWords(currentUser,setId,db);
+  const queue=accessibleWords.map((w,wi)=>{
+    return{wordIndex:wi,word:w,progress:db.progress[currentUser+'_'+setId+'_'+wi]||{reps:0,ef:1.3,interval:0,nextReview:null},key:currentUser+'_'+setId+'_'+wi};
+  });
+  shuffle(queue);
+  const autoMode=practiceMode;
+  studyMode=autoMode;studyDirection=practiceDir;
+  studySession={setId,set,queue,notDueWords:[],hasDueOnly:false,idx:0,correct:0,firstCorrect:0,total:queue.length,startTime:Date.now(),flipped:false,mode:autoMode,flipRated:0,flipTotal:queue.length,_startStage:practiceStage,freePractice:true,freePracticeStage:practiceStage,interacted:false};
+  document.getElementById('study-set-title-bar').textContent=set.title;
+  updateDirToggleText();
+  document.getElementById('free-practice-banner').style.display='';
+  updateLevelUI(practiceStage);
+  ['flip','mc','type','results'].forEach(m=>{document.getElementById('mode-'+m).style.display=m===autoMode?'':'none';});
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  const ab=document.getElementById('btn-'+autoMode);if(ab)ab.classList.add('active');
+  show('study');loadCard();
+}
+
+function getUnlockedStage(){
+  if(!studySession)return 0;
+  // During free practice, cap accessible stages to what was allowed at launch
+  if(studySession.freePractice)return studySession.freePracticeStage||0;
+  const db=getDB();return getSetStage(currentUser,studySession.setId,db);
+}
+
+function updateLevelUI(unlockedStage){
+  var modeNames=['flip','mc','type'],minStages={flip:0,mc:1,type:3};
+  var flipSub='L \u2192 E',mcSub=unlockedStage>=2?'E \u2192 L':'L \u2192 E',typeSub=unlockedStage>=4?'E \u2192 L':'L \u2192 E';
+  var subs={flip:flipSub,mc:mcSub,type:typeSub};
+  var btnLabels={flip:'Level 1 \u00b7 Flip card',mc:'Level 2 \u00b7 Multiple choice',type:'Level 3 \u00b7 Type answer'};
+  modeNames.forEach(function(mn){
+    var btn=document.getElementById('btn-'+mn),sub=document.getElementById('btn-'+mn+'-sub');
+    if(!btn)return;
+    var locked=unlockedStage<minStages[mn];
+    btn.style.opacity=locked?'0.5':'1';btn.style.cursor=locked?'not-allowed':'pointer';
+    var mainSpan=btn.querySelector('div:first-child');
+    if(mainSpan)mainSpan.textContent=(locked?'\u{1F512} ':'')+btnLabels[mn];
+    if(sub)sub.textContent=locked?'':subs[mn];
+  });
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  var activeBtn=document.getElementById('btn-'+studyMode);if(activeBtn)activeBtn.classList.add('active');
+}
+
+function updateLevelUIScheduled(currentStage,overrideMode,overrideDir){
+  var modeNames=['flip','mc','type'];
+  var currentMode=overrideMode||STAGE_MODE[currentStage];
+  var dir=overrideDir||STAGE_DIR[currentStage];
+  var dirSub=dir==='english-latin'?'E → L':'L → E';
+  var btnLabels={flip:'Level 1 · Flip card',mc:'Level 2 · Multiple choice',type:'Level 3 · Type answer'};
+  modeNames.forEach(function(mn){
+    var btn=document.getElementById('btn-'+mn),sub=document.getElementById('btn-'+mn+'-sub');
+    if(!btn)return;
+    var isActive=mn===currentMode;
+    btn.style.opacity=isActive?'1':'0.35';
+    btn.style.cursor=isActive?'pointer':'not-allowed';
+    var mainSpan=btn.querySelector('div:first-child');
+    if(mainSpan)mainSpan.textContent=(isActive?'':'🔒 ')+btnLabels[mn];
+    if(sub)sub.textContent=isActive?dirSub:'';
+    btn.classList.toggle('active',isActive);
+  });
+}
+
+function trySetModeBtn(modeName,el){
+  const banner=document.getElementById('level-banner');
+  if(studySession&&!studySession.freePractice){
+    const currentMode=studySession.mode||STAGE_MODE[studySession._startStage||0];
+    if(modeName!==currentMode){
+      banner.textContent='Only your current level is available in a scheduled session. Use Extra practice to review other levels.';
+      banner.style.display='';setTimeout(()=>{banner.style.display='none';},4000);return;
+    }
+    banner.style.display='none';return;
+  }
+  const unlockedStage=getUnlockedStage(),minStage={flip:0,mc:1,type:3}[modeName];
+  if(unlockedStage<minStage){
+    const msgs={mc:'Complete Level 1 to unlock Level 2.',type:'Complete Level 2 to unlock Level 3.'};
+    banner.textContent=msgs[modeName]||'Complete the previous level first.';
+    banner.style.display='';setTimeout(()=>{banner.style.display='none';},4000);return;
+  }
+  banner.style.display='none';
+  let targetStage;
+  if(modeName==='flip')targetStage=0;
+  else if(modeName==='mc')targetStage=unlockedStage>=2?2:1;
+  else targetStage=unlockedStage>=4?4:3;
+  studyDirection=STAGE_DIR[targetStage];
+  updateDirToggleText();
+  setStudyMode(modeName,el,targetStage);
+}
+
+function setStudyMode(mode,el,stageIdx){
+  studyMode=mode;if(studySession)studySession.mode=mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  ['flip','mc','type','results'].forEach(m=>{document.getElementById('mode-'+m).style.display=m===mode?'':'none';});
+  if(studySession){
+    const db=getDB();
+    if(stageIdx!==undefined){studyDirection=STAGE_DIR[stageIdx];updateDirToggleText();}
+    const{due,notDue}=buildQueue(studySession.set,studySession.setId,db,true);
+    const q=due.length>0?due:studySession.set.words.map((w,wi)=>({wordIndex:wi,word:w,progress:db.progress[currentUser+'_'+studySession.setId+'_'+wi]||{reps:0,ef:1.3,interval:0,nextReview:null},key:currentUser+'_'+studySession.setId+'_'+wi}));
+    shuffle(q);
+    studySession.queue=q;studySession.notDueWords=due.length>0?notDue:[];studySession.hasDueOnly=due.length>0&&notDue.length>0;
+    studySession.idx=0;studySession.correct=0;studySession.firstCorrect=0;studySession.total=q.length;studySession.startTime=Date.now();studySession.interacted=false;
+    if(mode==='flip'){studySession.flipRated=0;studySession.flipTotal=q.length;}
+    loadCard();
+  }
+}
+
+function toggleDirection(){
+  if(studySession&&(studyMode==='mc'||studyMode==='type')&&studySession.interacted){
+    toast('Direction cannot be changed after the first answer.');
+    return;
+  }
+  if(studySession){
+    const db2=getDB();
+    const effectiveStage=studySession.freePractice
+      ?studySession.freePracticeStage||0
+      :getSetStage(currentUser,studySession.setId,db2);
+    if(studyMode==='mc'&&effectiveStage<2){
+      toast('Clear MC E→L (Level 3) first to toggle direction.');
+      return;
+    }
+    if(studyMode==='type'&&effectiveStage<4){
+      toast('Clear Type E→L (Level 5) first to toggle direction.');
+      return;
+    }
+  }
+  studyDirection=studyDirection==='latin-english'?'english-latin':'latin-english';
+  updateDirToggleText();
+  loadCard();
+}
+
+function loadCard(){
+  if(!studySession)return;
+  const{queue,idx,total}=studySession;
+  if(idx>=total){showResults();return;}
+  const card=queue[idx];
+  const pct=Math.round((idx/total)*100);
+  document.getElementById('study-prog').style.width=pct+'%';
+  document.getElementById('study-progress-label').textContent='Card '+(idx+1)+' / '+total;
+  const front=studyDirection==='latin-english'?card.word.latin:card.word.english;
+  const back=studyDirection==='latin-english'?card.word.english:card.word.latin;
+  const frontLang=studyDirection==='latin-english'?'Latin':'English';
+  const backLang=studyDirection==='latin-english'?'English':'Latin';
+  // Toggle is dimmed only after the student has answered in mc/type mode.
+  // Direction eligibility (stage checks) is handled inside toggleDirection().
+  var toggleLocked=(studyMode==='mc'||studyMode==='type')&&studySession&&studySession.interacted;
+  document.getElementById('dir-toggle').style.opacity=toggleLocked?'0.35':'1';
+  document.getElementById('dir-toggle').title=toggleLocked?'Direction locked after first answer':'';
+  if(studyMode==='flip'){
+    const fc=document.getElementById('flashcard');
+    const doLoad=()=>{
+      document.getElementById('front-lang').textContent=frontLang;
+      document.getElementById('front-word').textContent=front;
+      document.getElementById('back-lang').textContent=backLang;
+      document.getElementById('back-word').textContent=back;
+      document.getElementById('back-notes').textContent=card.word.notes||'';
+      fc.classList.remove('flipped');studySession.flipped=false;
+      document.getElementById('flip-rate-btns').style.display='none';
+      document.getElementById('flip-reveal-btn').style.display='';
+      document.getElementById('flip-back-btn').style.display='none';
+    };
+    if(fc.classList.contains('flipped')){fc.classList.remove('flipped');setTimeout(doLoad,520);}else{doLoad();}
+  }else if(studyMode==='mc'){
+    document.getElementById('mc-front-lang').textContent=frontLang;
+    document.getElementById('mc-question').textContent=front;
+    const wrongPool=studySession.set.words.filter((_,wi)=>wi!==card.wordIndex);shuffle(wrongPool);
+    const opts=[back,...wrongPool.slice(0,3).map(w=>studyDirection==='latin-english'?w.english:w.latin)];shuffle(opts);
+    const optsDiv=document.getElementById('mc-options');optsDiv.innerHTML='';
+    opts.forEach(opt=>{const btn=document.createElement('div');btn.className='mc-option';btn.textContent=opt;btn.onclick=()=>selectMC(btn,opt,back);optsDiv.appendChild(btn);});
+  }else if(studyMode==='type'){
+    document.getElementById('type-front-lang').textContent=frontLang;
+    document.getElementById('type-question').textContent=front;
+    document.getElementById('type-answer').value='';
+    document.getElementById('type-feedback').style.display='none';
+    document.getElementById('type-feedback').className='type-feedback';
+    document.getElementById('type-check-btn').style.display='';
+    document.getElementById('type-check-btn').textContent='Check answer';
+    document.getElementById('type-next-btn').style.display='none';
+    document.getElementById('type-next-btn').textContent='Next card \u2192';
+    document.getElementById('type-answer').placeholder='Type the translation\u2026';
+    setTimeout(()=>{try{document.getElementById('type-answer').focus();}catch(e){}},100);
+  }
+}
+
+function flipCard(){
+  if(!studySession)return;
+  const fc=document.getElementById('flashcard');
+  if(!studySession.flipped){
+    fc.classList.add('flipped');studySession.flipped=true;
+    document.getElementById('flip-rate-btns').style.display='';
+    document.getElementById('flip-reveal-btn').style.display='none';
+    document.getElementById('flip-back-btn').style.display='';
+  }else{
+    fc.classList.remove('flipped');studySession.flipped=false;
+    document.getElementById('flip-rate-btns').style.display='none';
+    document.getElementById('flip-reveal-btn').style.display='';
+    document.getElementById('flip-back-btn').style.display='none';
+  }
+}
+
+function rateCard(quality){
+  if(!studySession)return;
+  const{queue,idx}=studySession,card=queue[idx];
+  if(quality>=3){studySession.correct++;studySession.flipRated=(studySession.flipRated||0)+1;}
+  else{var retry=Object.assign({},card,{againSeen:true,progress:Object.assign({},card.progress)});studySession.queue.push(retry);studySession.total=studySession.queue.length;}
+  if(!studySession.freePractice){const newP=sm2(card.progress,quality);const db=getDB();db.progress[card.key]=newP;saveDB(db);}
+  studySession.idx++;loadCard();
+}
+
+function selectMC(btn,selected,correct){
+  document.querySelectorAll('.mc-option').forEach(b=>{b.onclick=null;});
+  if(selected===correct){
+    btn.classList.add('correct');studySession.correct++;
+    studySession.interacted=true;
+    var mcCard=studySession.queue[studySession.idx];
+    if(!mcCard.mcWrongSeen)studySession.firstCorrect++;
+    rateCardAuto(true);setTimeout(nextCard,850);
+  }else{
+    btn.classList.add('wrong');
+    studySession.interacted=true;
+    document.querySelectorAll('.mc-option').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});
+    rateCardAuto(false);
+    var card=studySession.queue[studySession.idx];
+    var retry=Object.assign({},card,{mcWrongSeen:true,progress:Object.assign({},card.progress)});
+    studySession.queue.push(retry);studySession.total=studySession.queue.length;
+    card.mcWrongSeen=true;
+    setTimeout(nextCard,1300);
+  }
+}
+
+function handleTypeEnter(e){
+  if(e.key!=='Enter')return;
+  const nextBtn=document.getElementById('type-next-btn');
+  if(nextBtn&&nextBtn.style.display!=='none'){nextCard();}else{checkTypeAnswer();}
+}
+
+function checkTypeAnswer(){
+  if(!studySession)return;
+  const card=studySession.queue[studySession.idx];
+  const answer=document.getElementById('type-answer').value.trim().toLowerCase();
+  const fb=document.getElementById('type-feedback');
+  if(card.awaitingConfirm){
+    const confirmAlts=card.confirmAnswer.toLowerCase().split('/').map(s=>s.trim());
+    if(confirmAlts.some(a=>a===answer)){
+      fb.className='type-feedback correct';fb.style.display='block';fb.textContent='Good \u2014 moving on.';
+      document.getElementById('type-answer').value='';document.getElementById('type-answer').placeholder='Type the translation\u2026';
+      document.getElementById('type-check-btn').style.display='none';document.getElementById('type-check-btn').textContent='Check answer';
+      document.getElementById('type-next-btn').style.display='';document.getElementById('type-next-btn').textContent='Next card \u2192';
+    }else{
+      fb.className='type-feedback wrong';fb.style.display='block';
+      fb.innerHTML='Not quite. Write: <strong>'+card.confirmAnswer+'</strong>';
+      const inp=document.getElementById('type-answer');inp.value='';
+      inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');
+      inp.addEventListener('animationend',function(){inp.classList.remove('shake');},{once:true});
+      setTimeout(function(){try{inp.focus();}catch(e){}},80);
+    }
+    return;
+  }
+  const correctRaw=studyDirection==='latin-english'?card.word.english:card.word.latin;
+  const alts=correctRaw.toLowerCase().split('/').map(s=>s.trim());
+  const isCorrect=alts.some(a=>a===answer||answer===a);
+  studySession.interacted=true;
+  fb.style.display='block';
+  if(isCorrect){
+    fb.className='type-feedback correct';fb.textContent='Correct!';
+    studySession.correct++;
+    if(!card.wrongSeen)studySession.firstCorrect++;
+    rateCardAuto(true);
+    document.getElementById('type-check-btn').style.display='none';
+    document.getElementById('type-next-btn').style.display='';
+  }else{
+    fb.className='type-feedback wrong';
+    fb.innerHTML='Incorrect. The correct answer is: <strong>'+correctRaw+'</strong><br><span style="font-size:13px;opacity:0.85">Type the correct answer to continue.</span>';
+    rateCardAuto(false);
+    const inp=document.getElementById('type-answer');inp.value='';
+    inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');
+    inp.addEventListener('animationend',function(){inp.classList.remove('shake');},{once:true});
+    inp.placeholder='Type the correct answer to continue\u2026';
+    setTimeout(function(){try{inp.focus();}catch(e){}},80);
+    card.awaitingConfirm=true;card.confirmAnswer=correctRaw;
+    document.getElementById('type-check-btn').style.display='';document.getElementById('type-check-btn').textContent='Confirm';
+    document.getElementById('type-next-btn').style.display='none';
+    var retry=Object.assign({},card,{wrongSeen:true,awaitingConfirm:false,isRetry:true,progress:Object.assign({},card.progress)});
+    studySession.queue.push(retry);studySession.total=studySession.queue.length;
+    card.wrongSeen=true;
+  }
+}
+
+function rateCardAuto(correct,quality){
+  if(!studySession)return;
+  if(studySession.freePractice)return;
+  const card=studySession.queue[studySession.idx];
+  const q=(quality!==undefined)?quality:(correct?(studyMode==='type'?5:4):0);
+  const newP=sm2(card.progress,q);const db=getDB();db.progress[card.key]=newP;saveDB(db);
+}
+
+function nextCard(){if(!studySession)return;studySession.idx++;loadCard();}
+
+/* ── SM-2 ALGORITHM ── */
+function sm2(p,quality){
+  let{reps,ef,interval}=p;
+  ef=ef||SM2_START_EF;reps=reps||0;interval=interval||0;
+  const nextReview=new Date();
+  if(quality<3){
+    reps=0;ef=SM2_START_EF;
+    nextReview.setMinutes(nextReview.getMinutes()+LEARNING_INTERVALS_MIN[1]);
+    return{reps,ef,interval:0,nextReview:nextReview.toISOString()};
+  }
+  reps++;
+  ef=Math.max(1.3,ef+0.1-(5-quality)*(0.08+(5-quality)*0.02));
+  if(reps<=LEARNING_PHASE_STEPS){
+    const mins=LEARNING_INTERVALS_MIN[reps];
+    nextReview.setMinutes(nextReview.getMinutes()+mins);
+    return{reps,ef,interval:0,nextReview:nextReview.toISOString()};
+  }else{
+    let dayInterval;
+    if(reps===LEARNING_PHASE_STEPS+1)dayInterval=SM2_START_INTERVAL_DAYS;
+    else dayInterval=Math.round(interval*ef);
+    dayInterval=Math.min(dayInterval,90);
+    nextReview.setDate(nextReview.getDate()+dayInterval);
+    return{reps,ef,interval:dayInterval,nextReview:nextReview.toISOString()};
+  }
+}
+
+/* ── RESULTS ── */
+function showResults(){
+  document.getElementById('study-prog').style.width='100%';
+  ['flip','mc','type'].forEach(m=>{document.getElementById('mode-'+m).style.display='none';});
+  document.getElementById('mode-results').style.display='';
+  const elapsed=Math.round((Date.now()-studySession.startTime)/1000);
+  const mins=Math.floor(elapsed/60),secs=elapsed%60;
+  const correct=studySession.correct,firstCorrect=studySession.firstCorrect||0;
+  // Use the number of words in the original queue, not the full set size.
+  // During chunking the queue only contains words up to the current chunk.
+  const origTotal=studySession._startChunk!==null&&studySession._startChunk!==undefined
+    ?getChunkWords(studySession.set,studySession._startChunk).length
+    :studySession.set.words.length;
+  const pct=studyMode==='flip'
+    ?(origTotal>0?Math.round(((studySession.flipRated||0)/origTotal)*100):0)
+    :(origTotal>0?Math.round((firstCorrect/origTotal)*100):0);
+  document.getElementById('res-correct').textContent=studyMode==='flip'?(studySession.flipRated||0):firstCorrect;
+  document.getElementById('res-correct-card').style.display=studyMode==='flip'?'none':'';
+  document.getElementById('res-cards').textContent=origTotal;
+  document.getElementById('res-time').textContent=mins+'m '+secs+'s';
+
+  const db=getDB();if(!db.setStage)db.setStage={};if(!db.typePasses)db.typePasses={};if(!db.chunkStage)db.chunkStage={};
+  const stageKey=currentUser+'_'+studySession.setId;
+  const curStage=db.setStage[stageKey]||0,sessionDir=studyDirection;
+  let unlockMsg='';
+
+  // Free practice — skip all advancement
+  if(studySession.freePractice){
+    let xpHtml='<div style="padding:10px 14px;border-radius:var(--radius);background:var(--blue-light);color:var(--blue);font-size:14px">Free practice complete \u2014 your progress and scheduling were not affected.</div>';
+    document.getElementById('xp-earned-display').innerHTML=xpHtml;
+    document.getElementById('results-next-level').style.display='none';
+    return;
+  }
+
+  if(studySession._startChunk!==null&&studySession._startChunk!==undefined){
+    // ── CHUNK PHASE ──
+    const ci=studySession._startChunk,chunkSt=studySession._startChunkStage,set=studySession.set;
+    const chunkOnlyWords=getChunkOnlyWords(set,ci),chunkTotal=chunkOnlyWords.length;
+    const chunkKey=currentUser+'_'+studySession.setId+'_'+ci;
+    if(chunkSt===0&&studyMode==='flip'){
+      const chunkStart=ci*CHUNK_SIZE;
+      let chunkFlipRated=0;
+      for(var cw=0;cw<chunkOnlyWords.length;cw++){
+        const p=db.progress[currentUser+'_'+studySession.setId+'_'+(chunkStart+cw)];
+        if(p&&p.reps>=1)chunkFlipRated++;
+      }
+      if(chunkFlipRated>=chunkTotal){
+        db.chunkStage[chunkKey]=1;
+        const cS=ci*CHUNK_SIZE+1,cE=Math.min((ci+1)*CHUNK_SIZE,set.words.length);
+        unlockMsg='Words '+cS+'–'+cE+': Multiple choice unlocked! Come back when your next review is due.';
+      }else{
+        unlockMsg='Rate all cards in this chunk to advance. ('+chunkFlipRated+'/'+chunkTotal+' rated so far.)';
+      }
+    }else if(chunkSt===1&&studyMode==='mc'&&sessionDir==='latin-english'){
+      if(pct===100){
+        db.chunkStage[chunkKey]=2;
+        const nextChunk=ci+1,totalChunks=getChunkCount(set);
+        if(nextChunk<totalChunks){
+          const nS=nextChunk*CHUNK_SIZE+1,nE=Math.min((nextChunk+1)*CHUNK_SIZE,set.words.length);
+          unlockMsg='Chunk '+(ci+1)+' complete! Words '+nS+'–'+nE+' are now unlocked.';
+        }else{
+          unlockMsg='All chunks complete! The full set is now available at Level 3.';
+        }
+      }else{
+        unlockMsg='Score 100% on MC Latin→English to complete this chunk. Try again!';
+      }
+    }
+  }else{
+    // ── FULL-SET PHASE ──
+    if(curStage===0&&studyMode==='flip'){
+      const allRated=(studySession.flipRated||0)>=origTotal;
+      if(allRated){db.setStage[stageKey]=1;unlockMsg='Stage 2 unlocked: Multiple choice Latin → English!';}
+    }else if(curStage===1&&studyMode==='mc'&&sessionDir==='latin-english'){
+      if(pct===100){db.setStage[stageKey]=2;unlockMsg='Stage 3 unlocked: Multiple choice English → Latin!';}
+      else unlockMsg='Score 100% on MC Latin→English to advance. Try again!';
+    }else if(curStage===2&&studyMode==='mc'&&sessionDir==='english-latin'){
+      if(pct===100){db.setStage[stageKey]=3;unlockMsg='Stage 4 unlocked: Type answer Latin → English!';}
+      else unlockMsg='Score 100% on MC English→Latin to advance. Try again!';
+    }else if(curStage===3&&studyMode==='type'&&sessionDir==='latin-english'){
+      if(pct===100){db.setStage[stageKey]=4;unlockMsg='Stage 5 unlocked: Type answer English → Latin! This is the mastery stage.';}
+      else unlockMsg='Score 100% on Type Latin→English to advance. Try again!';
+    }else if(curStage===4&&studyMode==='type'&&sessionDir==='english-latin'){
+      if(pct===100){
+        db.typePasses[stageKey]=(db.typePasses[stageKey]||0)+1;
+        const passes=db.typePasses[stageKey],NEEDED=5;
+        if(passes>=NEEDED)unlockMsg='Mastered! You have typed English→Latin perfectly '+passes+' time'+(passes!==1?'s':'')+' .';
+        else unlockMsg='Perfect! '+passes+'/'+NEEDED+' perfect English→Latin sessions toward mastery.';
+      }else unlockMsg='Score 100% on Type English→Latin to count toward mastery.';
+    }
+  }
+
+  let emoji='\u{1F3DB}',msg='Session complete!';
+  if(pct>=90){emoji='\u{1F3C6}';msg='Excellent work!';}
+  else if(pct>=70){emoji='\u2B50';msg='Well done!';}
+  else if(pct>=50){emoji='\u{1F4D6}';msg='Keep practicing!';}
+  else{emoji='\u{1F4AA}';msg='Keep at it \u2014 Rome was not built in a day!';}
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-msg').textContent=msg;
+  document.getElementById('result-sub').textContent=studyMode==='flip'
+    ?origTotal+' cards reviewed'
+    :pct+'% correct on '+origTotal+' cards';
+
+  let xpHtml='';
+  if(unlockMsg)xpHtml+='<div style="padding:10px 14px;border-radius:var(--radius);background:var(--teal-light);color:var(--teal);font-size:14px;font-weight:600">'+unlockMsg+'</div>';
+  document.getElementById('xp-earned-display').innerHTML=xpHtml;
+
+  const nextLevelDiv=document.getElementById('results-next-level');
+  let nextHtml='';
+  const newStage=(db.setStage&&db.setStage[stageKey])||0;
+  // No instant continue — student must wait for SM-2 interval before next stage
+  if(newStage>(studySession._startStage||0)){
+    nextHtml+='<div style="padding:10px 14px;border-radius:var(--radius);background:var(--teal-light);color:var(--teal);font-size:13px">Next stage unlocked! Come back when your next review is due to continue.</div>';
+  }
+  let nextDue=null;
+  studySession.set.words.forEach((w,wi)=>{
+    const p=db.progress[currentUser+'_'+studySession.setId+'_'+wi];
+    if(p&&p.nextReview){const d=new Date(p.nextReview);if(!nextDue||d<nextDue)nextDue=d;}
+  });
+  if(nextDue)nextHtml+='<div style="margin-top:10px;font-size:13px;color:var(--text3);font-style:italic">Next review due '+formatNextDue(nextDue)+'.</div>';
+  nextLevelDiv.style.display=nextHtml?'':'none';
+  nextLevelDiv.innerHTML=nextHtml;
+
+  const today=new Date().toDateString();
+  if(db.users[currentUser].lastStudyDay!==today){
+    const yest=new Date();yest.setDate(yest.getDate()-1);
+    if(db.users[currentUser].lastStudyDay===yest.toDateString())db.users[currentUser].streak=(db.users[currentUser].streak||0)+1;
+    else db.users[currentUser].streak=1;
+    db.users[currentUser].lastStudyDay=today;
+  }
+  db.sessions.push({user:currentUser,setId:studySession.setId,mode:studyMode,duration:elapsed,correct,total:origTotal,pct,date:new Date().toISOString()});
+  saveDB(db);
+}
+
+function exitStudy(){
+  studySession=null;
+  if(currentRole==='teacher'){show('teacher');renderTeacher();}else{show('student');renderStudent();}
+}
+
+/* ── UTILS ── */
+function formatNextDue(nextDue){
+  const now=new Date(),diffMs=nextDue-now;
+  if(diffMs<=0)return'now';
+  if(diffMs<60*1000)return'in under a minute';
+  if(diffMs<60*60*1000){const mins=Math.round(diffMs/(60*1000));return'in '+mins+' minute'+(mins!==1?'s':'');}
+  if(diffMs<24*60*60*1000){
+    const hrs=Math.floor(diffMs/(60*60*1000)),mins=Math.floor((diffMs%(60*60*1000))/(60*1000));
+    var s='in '+hrs+' hour'+(hrs!==1?'s':'');if(mins>0)s+=' '+mins+' min';return s;
+  }
+  const diffDays=Math.floor(diffMs/(24*60*60*1000));
+  const timeStr=nextDue.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  if(diffDays===1)return'tomorrow at '+timeStr;
+  const dateStr=nextDue.toLocaleDateString([],{month:'short',day:'numeric'});
+  return'on '+dateStr+' at '+timeStr;
+}
+
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+
+function esc(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+let toastTimer=null;
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ── KEYBOARD SHORTCUTS ── */
+document.addEventListener('keydown',function(e){
+  if(e.code==='Space'&&studySession&&studyMode==='flip'){
+    var tag=document.activeElement&&document.activeElement.tagName;
+    if(tag==='BUTTON'||tag==='INPUT'||tag==='TEXTAREA')return;
+    e.preventDefault();flipCard();
+  }
+});
+
+getDB();
+</script>
+</body>
+</html>
